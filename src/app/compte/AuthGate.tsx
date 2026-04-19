@@ -339,6 +339,10 @@ export default function AuthGate() {
             </svg>
             Continuer avec Google
           </button>
+          {/* Avertissement PWA — iOS ouvre Google dans Safari, session revient automatiquement */}
+          <p style={{ fontSize: 11, color: '#AAAAAA', textAlign: 'center', marginTop: 8, lineHeight: 1.4 }}>
+            Google s&apos;ouvrira dans Safari. Après connexion, revenez sur l&apos;app.
+          </p>
         </>
       )}
 

@@ -9,7 +9,7 @@ import CityInput from '@/components/CityInput'
 
 const sousCategories: Record<string, string[]> = {
   vehicule: ['Voiture', 'Scooter', 'Moto', 'Bateau'],
-  immobilier: ['Location', 'Vente', 'Location Saisonnière', 'Commerce'],
+  immobilier: ['Location', 'Vente', 'Location Saisonnière', 'Commerce', 'Terrain'],
   maison: ['Ameublement', 'Électroménager'],
 }
 
@@ -183,7 +183,7 @@ export default function VendrePage() {
 
       if (insertError) throw insertError
 
-      router.push(`/annonce/${listing!.id}`)
+      router.replace(`/annonce/${listing!.id}`)
 
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Une erreur est survenue'

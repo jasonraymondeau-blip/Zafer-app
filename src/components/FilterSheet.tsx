@@ -66,6 +66,7 @@ function getChampsActifs(categorie: string, sousCategorie: string): string[] {
     if (sc === 'location') return ['type_bien', 'loyer', 'meuble', 'nb_chambres', 'ville']
     if (sc === 'vente') return ['type_bien', 'prix', 'surface', 'nb_chambres', 'ville']
     if (sc.includes('saisonni')) return ['prix_nuit', 'nb_chambres', 'ville']
+    if (sc === 'terrain') return ['prix', 'surface', 'ville']
     return ['type_bien', 'prix', 'surface', 'ville']
   }
 

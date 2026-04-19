@@ -114,8 +114,12 @@ export default async function HomePage() {
   return (
     <div className="max-w-lg mx-auto bg-white min-h-screen" style={{ paddingBottom: 96 }}>
 
-      {/* ── Header : salutation dynamique ── */}
-      <header style={{ padding: '24px 16px 0' }}>
+      {/* ── Header : logo + salutation dynamique ── */}
+      <header style={{ padding: '20px 16px 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-titre.svg" alt="Zafer" style={{ height: 52, width: 'auto' }} />
+        </div>
         <Greeting />
       </header>
 
