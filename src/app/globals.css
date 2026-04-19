@@ -1,27 +1,32 @@
+/* Import Google Fonts — DOIT être en premier */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #1A1A1A;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: #1A1A1A;
+  background: #FFFFFF;
+  font-family: 'Inter', 'DM Sans', sans-serif;
+  -webkit-text-size-adjust: 100%;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Scrollbar horizontal invisible pour la barre de catégories */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Safe area pour les appareils avec encoche */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
 }
