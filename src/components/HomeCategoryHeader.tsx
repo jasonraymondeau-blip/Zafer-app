@@ -4,7 +4,8 @@ import { ChevronRight } from 'lucide-react'
 import { CarIcon, HouseIcon, ArmchairIcon } from '@phosphor-icons/react/dist/ssr'
 import { useSearchModal } from '@/contexts/SearchModalContext'
 
-const ICON_MAP: Record<string, React.ComponentType<{ size?: number; color?: string; weight?: string }>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ICON_MAP: Record<string, React.ComponentType<any>> = {
   vehicule:   CarIcon,
   immobilier: HouseIcon,
   maison:     ArmchairIcon,

@@ -70,7 +70,8 @@ export default function HomePersonalized() {
         .from('listings')
         .select('*')
         .eq('actif', true)
-        .eq('categorie', lastCat)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .eq('categorie', lastCat as any)
         .order('created_at', { ascending: false })
         .limit(4)
 
