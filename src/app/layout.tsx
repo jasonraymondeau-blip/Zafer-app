@@ -5,6 +5,15 @@ import Providers from './Providers'
 export const metadata: Metadata = {
   title: 'Zafer — Petites annonces île Maurice & La Réunion',
   description: "Achetez et vendez facilement à l'île Maurice et La Réunion",
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Zafer',
+  },
+  icons: {
+    apple: '/icon-192.png',
+  },
 }
 
 // Empêche le zoom automatique d'iOS sur les inputs (font-size < 16px)
