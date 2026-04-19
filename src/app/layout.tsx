@@ -3,8 +3,8 @@ import './globals.css'
 import Providers from './Providers'
 
 export const metadata: Metadata = {
-  title: 'Zafer — Petites annonces île Maurice & La Réunion',
-  description: "Achetez et vendez facilement à l'île Maurice et La Réunion",
+  title: 'Zafer — Petites annonces île Maurice',
+  description: "Achetez et vendez facilement à l'île Maurice",
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,

@@ -1,7 +1,7 @@
 {
   "name": "Zafer — Petites annonces",
   "short_name": "Zafer",
-  "description": "Achetez et vendez à l'île Maurice et La Réunion",
+  "description": "Achetez et vendez à l'île Maurice",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FFFFFF",
