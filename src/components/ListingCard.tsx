@@ -77,14 +77,14 @@ export default function ListingCard({ listing, className = '', compact = false }
       <div>
         <div
           className="relative w-full"
-          style={{ aspectRatio: compact ? '4/5' : '16/9', borderRadius: 4, overflow: 'hidden' }}
+          style={{ aspectRatio: compact ? '4/5' : '16/9', borderRadius: 4, overflow: 'hidden', background: '#F5F5F5' }}
         >
           {hasPhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={listing.photos[0]}
               alt={listing.titre}
-              className="w-full h-full object-cover"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
           ) : (
             <CategoryPlaceholder categorie={listing.categorie} />

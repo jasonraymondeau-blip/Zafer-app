@@ -41,13 +41,13 @@ function AnnonceCard({ listing }: { listing: Listing }) {
       <div style={{ background: '#FFFFFF', borderRadius: 4 }}>
 
         {/* Image pleine largeur, ratio 4/5 */}
-        <div className="relative w-full" style={{ aspectRatio: '4/5', borderRadius: 4, overflow: 'hidden' }}>
+        <div className="relative w-full" style={{ aspectRatio: '4/5', borderRadius: 4, overflow: 'hidden', background: '#F5F5F5' }}>
           {hasPhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={listing.photos[0]}
               alt={listing.titre}
-              className="w-full h-full object-cover"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
           ) : (
             <PhotoPlaceholder categorie={listing.categorie} />
@@ -114,12 +114,8 @@ export default async function HomePage() {
   return (
     <div className="max-w-lg mx-auto bg-white min-h-screen" style={{ paddingBottom: 96 }}>
 
-      {/* ── Header : logo + salutation dynamique ── */}
-      <header style={{ padding: '20px 16px 0' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-titre.svg" alt="Zafer" style={{ height: 52, width: 'auto' }} />
-        </div>
+      {/* ── Header : salutation dynamique ── */}
+      <header style={{ padding: '24px 16px 0' }}>
         <Greeting />
       </header>
 

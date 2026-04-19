@@ -42,7 +42,6 @@ export default function AuthGate() {
 
   // Vérifie si l'utilisateur est connecté au chargement
   useEffect(() => {
-    // Timeout de sécurité si Supabase ne répond pas
     const timeout = setTimeout(() => setChargement(false), 3000)
 
     supabase.auth.getSession().then(({ data }) => {
@@ -51,15 +50,29 @@ export default function AuthGate() {
       setChargement(false)
     })
 
-    // Écoute les changements de session
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       setChargement(false)
     })
 
+    // Quand le PWA reprend le focus après Google OAuth dans Safari,
+    // les cookies partagés (même domaine) contiennent la session → on la lit
+    const handleVisibilite = () => {
+      if (document.visibilityState === 'visible') {
+        supabase.auth.getSession().then(({ data }) => {
+          if (data.session?.user) {
+            setUser(data.session.user)
+            router.push(redirectTo)
+          }
+        })
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilite)
+
     return () => {
       clearTimeout(timeout)
       subscription.unsubscribe()
+      document.removeEventListener('visibilitychange', handleVisibilite)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -339,10 +352,6 @@ export default function AuthGate() {
             </svg>
             Continuer avec Google
           </button>
-          {/* Avertissement PWA — iOS ouvre Google dans Safari, session revient automatiquement */}
-          <p style={{ fontSize: 11, color: '#AAAAAA', textAlign: 'center', marginTop: 8, lineHeight: 1.4 }}>
-            Google s&apos;ouvrira dans Safari. Après connexion, revenez sur l&apos;app.
-          </p>
         </>
       )}
 
