@@ -49,8 +49,28 @@ function SplashScreen() {
 }
 
 // Wrapper client pour le layout — nécessaire pour utiliser les contextes dans le Server Component layout.tsx
+// Vérifie si une nouvelle version est dispo et recharge le PWA automatiquement
+function useAutoUpdate() {
+  useEffect(() => {
+    const KEY = 'zafer_version'
+    fetch('/version.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(r => r.json())
+      .then(({ v }) => {
+        const saved = localStorage.getItem(KEY)
+        if (saved && saved !== String(v)) {
+          localStorage.setItem(KEY, String(v))
+          window.location.reload()
+        } else {
+          localStorage.setItem(KEY, String(v))
+        }
+      })
+      .catch(() => {})
+  }, [])
+}
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [splash, setSplash] = useState(true)
+  useAutoUpdate()
 
   useEffect(() => {
     const t = setTimeout(() => setSplash(false), 2000)

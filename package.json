@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
-    "build": "next build",
+    "build": "node -e \"require('fs').writeFileSync('public/version.json', JSON.stringify({v: Date.now()}))\" && next build",
     "start": "next start",
     "lint": "next lint"
   },
