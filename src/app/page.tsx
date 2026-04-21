@@ -26,7 +26,7 @@ function PhotoPlaceholder({ categorie }: { categorie: string }) {
   }
   const { bg, emoji } = map[categorie] ?? { bg: '#F5F5F5', emoji: '📦' }
   return (
-    <div style={{ background: bg, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} className="flex items-center justify-center">
+    <div style={{ background: bg, width: '100%', aspectRatio: '4/5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <span className="text-4xl">{emoji}</span>
     </div>
   )
@@ -40,14 +40,14 @@ function AnnonceCard({ listing }: { listing: Listing }) {
     <Link href={`/annonce/${listing.id}`} className="block">
       <div style={{ background: '#FFFFFF', borderRadius: 4 }}>
 
-        {/* Image pleine largeur, ratio 4/5 — padding-bottom pour hauteur uniforme sur tous appareils */}
-        <div className="relative w-full" style={{ paddingBottom: '125%', borderRadius: 4, overflow: 'hidden', background: '#F5F5F5' }}>
+        {/* Image pleine largeur — aspect-ratio sur l'img elle-même, garanti uniforme sur iOS Safari */}
+        <div className="relative w-full" style={{ borderRadius: 4, overflow: 'hidden', background: '#F5F5F5', lineHeight: 0 }}>
           {hasPhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={listing.photos[0]}
               alt={listing.titre}
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', display: 'block' }}
             />
           ) : (
             <PhotoPlaceholder categorie={listing.categorie} />

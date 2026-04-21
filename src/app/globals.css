@@ -30,3 +30,10 @@ body {
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* Neutralise le style natif iOS sur les champs input (fond gris par défaut sur Safari) */
+input {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #ffffff;
+}
