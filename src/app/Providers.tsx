@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { SearchModalProvider } from '@/contexts/SearchModalContext'
+import { RechercheModalProvider } from '@/contexts/RechercheModalContext'
 import GlobalSearchModal from '@/components/GlobalSearchModal'
+import RechercheModal from '@/components/RechercheModal'
 import BottomNav from '@/components/BottomNav'
 
 // Splash screen — fond blanc, logo + titre + spinner
@@ -79,12 +81,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <SearchModalProvider>
-      {splash && <SplashScreen />}
-      <main className="min-h-screen pb-20">
-        {children}
-      </main>
-      <BottomNav />
-      <GlobalSearchModal />
+      <RechercheModalProvider>
+        {splash && <SplashScreen />}
+        <main className="min-h-screen pb-20">
+          {children}
+        </main>
+        <BottomNav />
+        <GlobalSearchModal />
+        <RechercheModal />
+      </RechercheModalProvider>
     </SearchModalProvider>
   )
 }

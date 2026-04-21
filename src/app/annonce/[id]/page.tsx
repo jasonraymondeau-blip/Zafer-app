@@ -8,6 +8,7 @@ import AnnonceHero from '@/components/AnnonceHero'
 import FavoriButton from '@/components/FavoriButton'
 import BoutonRetour from '@/components/BoutonRetour'
 import BoutonPartage from '@/components/BoutonPartage'
+import type { Listing } from '@/lib/supabase'
 
 // Import dynamique pour éviter les erreurs SSR de Leaflet
 const MapAnnonce = dynamic(() => import('@/components/MapAnnonce'), { ssr: false })
@@ -16,10 +17,29 @@ interface AnnoncePageProps {
   params: { id: string }
 }
 
-const categorieLabels: Record<string, string> = {
-  vehicule: 'Véhicule',
-  immobilier: 'Immobilier',
-  maison: 'Maison',
+
+// Retourne les informations clés à afficher selon la catégorie
+function getInfosCles(annonce: Listing): Array<{ label: string; valeur: string }> {
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+  const infos: Array<{ label: string; valeur: string }> = []
+
+  if (annonce.categorie === 'immobilier') {
+    if (annonce.surface) infos.push({ label: 'Surface', valeur: `${annonce.surface} m²` })
+    if (annonce.type_bien) infos.push({ label: 'Type de bien', valeur: cap(annonce.type_bien) })
+    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie })
+    if (annonce.nb_chambres != null) infos.push({ label: 'Chambres', valeur: String(annonce.nb_chambres) })
+    if (annonce.meuble != null) infos.push({ label: 'Meublé', valeur: annonce.meuble ? 'Oui' : 'Non' })
+  } else if (annonce.categorie === 'vehicule') {
+    if (annonce.kilometrage) infos.push({ label: 'Kilométrage', valeur: `${annonce.kilometrage.toLocaleString()} km` })
+    if (annonce.boite_vitesse) infos.push({ label: 'Boîte', valeur: cap(annonce.boite_vitesse) })
+    if (annonce.carburant) infos.push({ label: 'Carburant', valeur: cap(annonce.carburant) })
+    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie })
+  } else if (annonce.categorie === 'maison') {
+    if (annonce.etat) infos.push({ label: 'État', valeur: cap(annonce.etat) })
+    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie })
+  }
+
+  return infos
 }
 
 export default async function AnnoncePage({ params }: AnnoncePageProps) {
@@ -29,8 +49,10 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
   // Fetch du profil vendeur pour récupérer son numéro et son prénom
   const vendeur = await getProfile(annonce.user_id)
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://zafer.mu'
+  const annonceUrl = `${appUrl}/annonce/${annonce.id}`
   const whatsappMessage = encodeURIComponent(
-    `Bonjour, je suis intéressé(e) par votre annonce "${annonce.titre}" sur Zafer.`
+    `Bonjour, je suis intéressé(e) par votre annonce "${annonce.titre}" sur Zafer.\n${annonceUrl}`
   )
   // Utilise le vrai numéro du vendeur, sinon désactive le bouton
   const telephone = vendeur?.telephone?.replace(/\s+/g, '') ?? null
@@ -79,68 +101,32 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
           </div>
         </div>
 
-        {/* Informations clés */}
-        <div className="mt-4 bg-card rounded-[6px] p-4">
-          <h2 className="font-semibold text-text-main text-sm mb-3">Informations clés</h2>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div>
-              <span className="text-text-muted">Catégorie</span>
-              <p className="font-medium">{categorieLabels[annonce.categorie]}</p>
+        {/* Informations clés — blocs horizontaux style design */}
+        {(() => {
+          const infos = getInfosCles(annonce)
+          if (infos.length === 0) return null
+          return (
+            <div className="mt-4 bg-card rounded-[12px] overflow-hidden">
+              <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                {infos.map((info, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      flex: '1 0 auto',
+                      minWidth: 80,
+                      padding: '14px 12px',
+                      textAlign: 'center',
+                      borderRight: i < infos.length - 1 ? '1px solid #EBEBEB' : undefined,
+                    }}
+                  >
+                    <p style={{ fontSize: 11, color: '#888888', marginBottom: 4 }}>{info.label}</p>
+                    <p style={{ fontSize: 14, fontWeight: 700, color: '#496977' }}>{info.valeur}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div>
-              <span className="text-text-muted">Sous-catégorie</span>
-              <p className="font-medium">{annonce.sous_categorie}</p>
-            </div>
-            {annonce.kilometrage && (
-              <div>
-                <span className="text-text-muted">Kilométrage</span>
-                <p className="font-medium">{annonce.kilometrage.toLocaleString()} km</p>
-              </div>
-            )}
-            {annonce.boite_vitesse && (
-              <div>
-                <span className="text-text-muted">Boîte</span>
-                <p className="font-medium capitalize">{annonce.boite_vitesse}</p>
-              </div>
-            )}
-            {annonce.carburant && (
-              <div>
-                <span className="text-text-muted">Carburant</span>
-                <p className="font-medium capitalize">{annonce.carburant}</p>
-              </div>
-            )}
-            {annonce.type_bien && (
-              <div>
-                <span className="text-text-muted">Type de bien</span>
-                <p className="font-medium capitalize">{annonce.type_bien}</p>
-              </div>
-            )}
-            {annonce.surface && (
-              <div>
-                <span className="text-text-muted">Surface</span>
-                <p className="font-medium">{annonce.surface} m²</p>
-              </div>
-            )}
-            {annonce.nb_chambres != null && (
-              <div>
-                <span className="text-text-muted">Chambres</span>
-                <p className="font-medium">{annonce.nb_chambres}</p>
-              </div>
-            )}
-            {annonce.meuble != null && (
-              <div>
-                <span className="text-text-muted">Meublé</span>
-                <p className="font-medium">{annonce.meuble ? 'Oui' : 'Non'}</p>
-              </div>
-            )}
-            {annonce.etat && (
-              <div>
-                <span className="text-text-muted">État</span>
-                <p className="font-medium capitalize">{annonce.etat}</p>
-              </div>
-            )}
-          </div>
-        </div>
+          )
+        })()}
 
         {/* Description */}
         {annonce.description && (

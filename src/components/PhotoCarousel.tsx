@@ -47,7 +47,7 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
   const emoji = categorie === 'vehicule' ? '🚗' : categorie === 'immobilier' ? '🏠' : '🛋️'
 
   return (
-    <div className="relative aspect-[4/3] bg-card overflow-hidden select-none">
+    <div className="relative aspect-[4/3] bg-card overflow-hidden select-none" style={{ borderRadius: '0 0 28px 28px' }}>
       {hasPhotos ? (
         <>
           {/* Piste de photos — chaque photo est positionnée en absolu */}

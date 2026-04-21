@@ -11,6 +11,7 @@ import {
   UserIcon,
 } from '@phosphor-icons/react/dist/ssr'
 import { useSearchModal } from '@/contexts/SearchModalContext'
+import { useRechercheModal } from '@/contexts/RechercheModalContext'
 import { createClient } from '@/lib/supabase-browser'
 
 const ICON_SIZE = 24
@@ -26,6 +27,7 @@ const COULEUR_NAV = '#404040'
 export default function BottomNav() {
   const pathname = usePathname()
   const { isOpen } = useSearchModal()
+  const { isOpen: isRechercheOpen } = useRechercheModal()
   const [connecte, setConnecte] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -39,8 +41,8 @@ export default function BottomNav() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Masquer sur les pages détail annonce, recherche, catégories et quand le modal est ouvert
-  if (isOpen || pathname.startsWith('/annonce/') || pathname.startsWith('/recherche') || pathname.startsWith('/categories')) return null
+  // Masquer sur les pages détail annonce, recherche, catégories et quand un modal est ouvert
+  if (isOpen || isRechercheOpen || pathname.startsWith('/annonce/') || pathname.startsWith('/recherche') || pathname.startsWith('/categories')) return null
 
   // Sur /compte, masquer si non connecté (affiche le formulaire de connexion)
   if (pathname === '/compte' && connecte !== true) return null
