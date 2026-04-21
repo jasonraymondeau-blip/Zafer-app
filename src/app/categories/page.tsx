@@ -422,7 +422,16 @@ export default function CategoriesPage() {
   // ══════════════════════════════════════════════════════════════════════
   return (
     <div className="max-w-lg mx-auto bg-white min-h-screen" style={{ paddingBottom: 96 }}>
-      <div style={{ paddingTop: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 16px 8px' }}>
+        <button
+          onClick={() => router.push('/')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, marginLeft: -4 }}
+        >
+          <ArrowLeft size={22} color="#1A1A1A" />
+        </button>
+        <span style={{ fontSize: 17, fontWeight: 700, color: '#1A1A1A' }}>Catégories</span>
+      </div>
+      <div>
         {CATEGORIES.map(({ id, label, Icon, sousCats }) => (
           <div key={id}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px 10px' }}>

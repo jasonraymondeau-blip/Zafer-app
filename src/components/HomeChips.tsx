@@ -10,7 +10,7 @@ const CHIPS = [
   { label: 'Maison',      categorie: 'maison',     Icon: ArmchairIcon, bg: '#F0EEFF', iconColor: '#5B3FD4' },
 ]
 
-// Chips de catégories — naviguent vers /recherche avec la catégorie en paramètre
+// Chips de catégories — "Voir tout" → /recherche, catégories → /categories
 export default function HomeChips() {
   return (
     <div
@@ -18,7 +18,7 @@ export default function HomeChips() {
       style={{ scrollbarWidth: 'none', marginTop: 20 }}
     >
       {CHIPS.map(({ label, categorie, Icon, bg, iconColor }) => {
-        const href = categorie ? `/recherche?categorie=${categorie}` : '/recherche'
+        const href = categorie ? '/categories' : '/recherche'
 
         return (
           <Link
