@@ -299,10 +299,10 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
                     <div className="flex gap-2">
                       <input type="number" placeholder="De" value={valeurs.annee_min}
                         onChange={(e) => set('annee_min', e.target.value)}
-                        className="flex-1 min-w-0 border border-gray-200 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
+                        className="flex-1 min-w-0 bg-white border border-gray-400 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
                       <input type="number" placeholder="À" value={valeurs.annee_max}
                         onChange={(e) => set('annee_max', e.target.value)}
-                        className="flex-1 min-w-0 border border-gray-200 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
+                        className="flex-1 min-w-0 bg-white border border-gray-400 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
                     </div>
                   </div>
                 )}
@@ -313,10 +313,10 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
                     <div className="flex gap-2">
                       <input type="number" placeholder="Min km" value={valeurs.km_min}
                         onChange={(e) => set('km_min', e.target.value)}
-                        className="flex-1 min-w-0 border border-gray-200 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
+                        className="flex-1 min-w-0 bg-white border border-gray-400 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
                       <input type="number" placeholder="Max km" value={valeurs.km_max}
                         onChange={(e) => set('km_max', e.target.value)}
-                        className="flex-1 min-w-0 border border-gray-200 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
+                        className="flex-1 min-w-0 bg-white border border-gray-400 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
                     </div>
                   </div>
                 )}
@@ -354,7 +354,7 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
                     <label className="block text-sm font-semibold text-text-main mb-2">Prix max (RS)</label>
                     <input type="number" placeholder="Prix maximum" value={valeurs.prix_max}
                       onChange={(e) => set('prix_max', e.target.value)}
-                      className="w-full border border-gray-200 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
+                      className="w-full bg-white border border-gray-400 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
                   </div>
                 )}
 
@@ -472,10 +472,10 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
                     <div className="flex gap-2">
                       <input type="number" placeholder="Min m²" value={valeurs.surface_min}
                         onChange={(e) => set('surface_min', e.target.value)}
-                        className="flex-1 min-w-0 border border-gray-200 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
+                        className="flex-1 min-w-0 bg-white border border-gray-400 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
                       <input type="number" placeholder="Max m²" value={valeurs.surface_max}
                         onChange={(e) => set('surface_max', e.target.value)}
-                        className="flex-1 min-w-0 border border-gray-200 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
+                        className="flex-1 min-w-0 bg-white border border-gray-400 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
                     </div>
                   </div>
                 )}
@@ -499,7 +499,7 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
                     <CityInput
                       value={valeurs.ville}
                       onChange={(v) => set('ville', v)}
-                      className="w-full border border-gray-200 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]"
+                      className="w-full bg-white border border-gray-400 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]"
                     />
                   </div>
                 )}
@@ -617,9 +617,9 @@ function FilterPrixMinMax({
       <label className="block text-sm font-semibold text-text-main mb-2">{label}</label>
       <div className="flex gap-2">
         <input type="number" placeholder="Min" value={min} onChange={(e) => onMin(e.target.value)}
-          className="flex-1 min-w-0 border border-gray-200 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
+          className="flex-1 min-w-0 bg-white border border-gray-400 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
         <input type="number" placeholder="Max" value={max} onChange={(e) => onMax(e.target.value)}
-          className="flex-1 min-w-0 border border-gray-200 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
+          className="flex-1 min-w-0 bg-white border border-gray-400 rounded-[12px] px-3 py-2.5 text-sm outline-none focus:border-[#1A1A1A]" />
       </div>
     </div>
   )

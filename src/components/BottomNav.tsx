@@ -39,8 +39,8 @@ export default function BottomNav() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Masquer sur les pages détail annonce et quand le modal de recherche est ouvert
-  if (isOpen || pathname.startsWith('/annonce/')) return null
+  // Masquer sur les pages détail annonce, recherche et quand le modal de recherche est ouvert
+  if (isOpen || pathname.startsWith('/annonce/') || pathname.startsWith('/recherche')) return null
 
   // Sur /compte, masquer si non connecté (affiche le formulaire de connexion)
   if (pathname === '/compte' && connecte !== true) return null

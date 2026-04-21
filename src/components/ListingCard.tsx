@@ -20,7 +20,7 @@ function CategoryPlaceholder({ categorie }: { categorie: string }) {
   }
   const { bg, emoji } = map[categorie] ?? { bg: '#F5F5F5', emoji: '📦' }
   return (
-    <div style={{ background: bg }} className="w-full h-full flex items-center justify-center">
+    <div style={{ background: bg, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} className="flex items-center justify-center">
       <span className="text-3xl">{emoji}</span>
     </div>
   )
@@ -77,14 +77,14 @@ export default function ListingCard({ listing, className = '', compact = false }
       <div>
         <div
           className="relative w-full"
-          style={{ aspectRatio: compact ? '4/5' : '16/9', borderRadius: 4, overflow: 'hidden', background: '#F5F5F5' }}
+          style={{ paddingBottom: compact ? '125%' : '56.25%', borderRadius: 4, overflow: 'hidden', background: '#F5F5F5' }}
         >
           {hasPhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={listing.photos[0]}
               alt={listing.titre}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
           ) : (
             <CategoryPlaceholder categorie={listing.categorie} />
