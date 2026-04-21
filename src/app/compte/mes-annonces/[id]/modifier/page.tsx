@@ -87,24 +87,35 @@ export default function ModifierAnnoncePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
-  // Convertit en WebP avant upload (même logique que /vendre)
+  // Recadre au centre en 4:5, redimensionne à max 1200px de large, convertit en WebP
   async function convertirEnWebP(fichier: File): Promise<File> {
     return new Promise((resolve) => {
       const img = new Image()
       const urlTemp = URL.createObjectURL(fichier)
       img.onload = () => {
         URL.revokeObjectURL(urlTemp)
+        const RATIO = 4 / 5
         const LARGEUR_MAX = 1200
-        let largeur = img.naturalWidth
-        let hauteur = img.naturalHeight
-        if (largeur > LARGEUR_MAX) {
-          hauteur = Math.round((hauteur * LARGEUR_MAX) / largeur)
-          largeur = LARGEUR_MAX
+        const natW = img.naturalWidth
+        const natH = img.naturalHeight
+        let srcX = 0, srcY = 0, srcW = natW, srcH = natH
+        if (natW / natH > RATIO) {
+          srcW = Math.round(natH * RATIO)
+          srcX = Math.round((natW - srcW) / 2)
+        } else {
+          srcH = Math.round(natW / RATIO)
+          srcY = Math.round((natH - srcH) / 2)
+        }
+        let destW = srcW
+        let destH = srcH
+        if (destW > LARGEUR_MAX) {
+          destH = Math.round(destH * LARGEUR_MAX / destW)
+          destW = LARGEUR_MAX
         }
         const canvas = document.createElement('canvas')
-        canvas.width = largeur
-        canvas.height = hauteur
-        canvas.getContext('2d')!.drawImage(img, 0, 0, largeur, hauteur)
+        canvas.width = destW
+        canvas.height = destH
+        canvas.getContext('2d')!.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, destW, destH)
         canvas.toBlob((blob) => {
           if (!blob) { resolve(fichier); return }
           const nomBase = fichier.name.replace(/\.[^.]+$/, '')

@@ -62,7 +62,7 @@ export default function VendrePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Convertit un File image en WebP via canvas (qualité 0.85, largeur max 1200px)
+  // Recadre au centre en 4:5, redimensionne à max 1200px de large, convertit en WebP
   async function convertirEnWebP(fichier: File): Promise<File> {
     return new Promise((resolve) => {
       const img = new Image()
@@ -71,25 +71,39 @@ export default function VendrePage() {
       img.onload = () => {
         URL.revokeObjectURL(urlTemp)
 
-        // Redimensionnement proportionnel si largeur > 1200px
+        const RATIO = 4 / 5
         const LARGEUR_MAX = 1200
-        let largeur = img.naturalWidth
-        let hauteur = img.naturalHeight
-        if (largeur > LARGEUR_MAX) {
-          hauteur = Math.round((hauteur * LARGEUR_MAX) / largeur)
-          largeur = LARGEUR_MAX
+
+        const natW = img.naturalWidth
+        const natH = img.naturalHeight
+
+        // Recadrage centré au ratio 4:5
+        let srcX = 0, srcY = 0, srcW = natW, srcH = natH
+        if (natW / natH > RATIO) {
+          srcW = Math.round(natH * RATIO)
+          srcX = Math.round((natW - srcW) / 2)
+        } else {
+          srcH = Math.round(natW / RATIO)
+          srcY = Math.round((natH - srcH) / 2)
+        }
+
+        // Redimensionnement si largeur > 1200px
+        let destW = srcW
+        let destH = srcH
+        if (destW > LARGEUR_MAX) {
+          destH = Math.round(destH * LARGEUR_MAX / destW)
+          destW = LARGEUR_MAX
         }
 
         const canvas = document.createElement('canvas')
-        canvas.width = largeur
-        canvas.height = hauteur
+        canvas.width = destW
+        canvas.height = destH
         const ctx = canvas.getContext('2d')!
-        ctx.drawImage(img, 0, 0, largeur, hauteur)
+        ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, destW, destH)
 
         canvas.toBlob(
           (blob) => {
             if (!blob) { resolve(fichier); return }
-            // Nommage avec extension .webp
             const nomBase = fichier.name.replace(/\.[^.]+$/, '')
             resolve(new File([blob], `${nomBase}.webp`, { type: 'image/webp' }))
           },
