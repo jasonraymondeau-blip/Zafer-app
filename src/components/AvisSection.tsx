@@ -123,7 +123,7 @@ export default function AvisSection({ vendeurId, listingId }: Props) {
     })
 
     if (error) {
-      setErreur('Erreur lors de l\'envoi. Réessayez.')
+      setErreur("Erreur lors de l'envoi. Réessayez.")
     } else {
       setSucces(true)
       setNote(0)
@@ -225,7 +225,7 @@ export default function AvisSection({ vendeurId, listingId }: Props) {
       {/* Liste des avis */}
       {avis.length === 0 ? (
         <p style={{ fontSize: 13, color: '#AAAAAA', textAlign: 'center', padding: '16px 0' }}>
-          Aucun avis pour ce vendeur pour l'instant.
+          Aucun avis pour ce vendeur pour l&apos;instant.
         </p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
