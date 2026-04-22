@@ -130,6 +130,11 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
   const champs = getChampsActifs(localCategorie, localSousCategorie)
   const nbFiltres = countFiltresActifs(current, categorie, sousCategorie)
 
+  // Chambres masquées si seul terrain est sélectionné (sans maison/appartement)
+  const typeBienActifs = valeurs.type_bien ? valeurs.type_bien.split(',') : []
+  const showNbChambres = champs.includes('nb_chambres') &&
+    (typeBienActifs.length === 0 || typeBienActifs.some((t) => ['maison', 'appartement'].includes(t)))
+
   // ── Helpers ────────────────────────────────────────────────────────────────
 
   function set(key: keyof FilterValues, value: string) {
@@ -534,7 +539,7 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
                 )}
 
                 {/* Chambres — multi select checkboxes */}
-                {champs.includes('nb_chambres') && (
+                {showNbChambres && (
                   <div>
                     <label className="block text-sm font-semibold text-text-main mb-2">Chambres</label>
                     <div className="space-y-1">

@@ -6,9 +6,10 @@ import { Share2, Check } from 'lucide-react'
 interface BoutonPartageProps {
   titre: string
   prix: string
+  ghost?: boolean
 }
 
-export default function BoutonPartage({ titre, prix }: BoutonPartageProps) {
+export default function BoutonPartage({ titre, prix, ghost = false }: BoutonPartageProps) {
   const [copie, setCopie] = useState(false)
 
   async function handlePartage() {
@@ -37,7 +38,7 @@ export default function BoutonPartage({ titre, prix }: BoutonPartageProps) {
       <button
         onClick={handlePartage}
         aria-label="Partager cette annonce"
-        className="bg-white/80 backdrop-blur-sm rounded-full p-2 shadow flex items-center justify-center"
+        className={`rounded-full p-2 flex items-center justify-center ${ghost ? '' : 'bg-white/80 backdrop-blur-sm shadow'}`}
         style={{ transition: 'transform 0.15s', transform: copie ? 'scale(0.9)' : 'scale(1)' }}
       >
         {copie

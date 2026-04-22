@@ -22,14 +22,12 @@ function SplashScreen() {
         zIndex: 9999,
       }}
     >
-      {/* Logo + Titre SVG */}
       <img
         src="/logo-titre.svg"
         alt="Zafer"
         style={{ width: 460, height: 230, marginBottom: 24, objectFit: 'contain' }}
       />
 
-      {/* Spinner rond */}
       <div
         style={{
           width: 28,

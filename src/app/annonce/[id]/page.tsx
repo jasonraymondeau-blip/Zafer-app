@@ -4,10 +4,7 @@ import { MapPin, Calendar } from 'lucide-react'
 import { getListing, getProfile } from '@/lib/listings'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import { getCoordsVille } from '@/lib/cities'
-import AnnonceHero from '@/components/AnnonceHero'
-import FavoriButton from '@/components/FavoriButton'
-import BoutonRetour from '@/components/BoutonRetour'
-import BoutonPartage from '@/components/BoutonPartage'
+import AnnonceImageSection from '@/components/AnnonceImageSection'
 import type { Listing } from '@/lib/supabase'
 
 // Import dynamique pour éviter les erreurs SSR de Leaflet
@@ -68,27 +65,29 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
   return (
     <div className="max-w-lg mx-auto relative">
 
-      {/* Carrousel photos + badge VENDU + bouton propriétaire */}
-      <div className="relative">
-        <AnnonceHero
-          photos={annonce.photos}
-          titre={annonce.titre}
-          categorie={annonce.categorie}
-          initialActif={annonce.actif}
-        />
-        <div className="absolute top-4 left-4 right-4 flex justify-between z-10">
-          <BoutonRetour />
-          <div className="flex gap-2">
-            <BoutonPartage titre={annonce.titre} prix={formatPrix(annonce.prix)} />
-            <FavoriButton listingId={annonce.id} size="md" />
-          </div>
-        </div>
-      </div>
+      <AnnonceImageSection
+        photos={annonce.photos}
+        titre={annonce.titre}
+        categorie={annonce.categorie}
+        initialActif={annonce.actif}
+        listingId={annonce.id}
+        prix={formatPrix(annonce.prix)}
+      />
 
-      {/* Contenu */}
-      <div className="px-4 pt-4 pb-32">
-        <p style={{ fontSize: 22, fontWeight: 500, color: '#404040' }}>Rs {annonce.prix.toLocaleString('fr-FR')}</p>
-        <h1 className="text-lg font-bold text-text-main mt-1">{annonce.titre}</h1>
+      {/* Contenu — panneau blanc qui chevauche le bas de l'image style Airbnb */}
+      <div
+        className="px-4 pb-32"
+        style={{
+          marginTop: -20,
+          paddingTop: 20,
+          position: 'relative',
+          zIndex: 1,
+          background: '#FFFFFF',
+          borderRadius: '20px 20px 0 0',
+        }}
+      >
+        <h1 className="text-xl font-bold text-text-main">{annonce.titre}</h1>
+        <p style={{ fontSize: 20, fontWeight: 600, color: '#1A1A1A', marginTop: 4 }}>Rs {annonce.prix.toLocaleString('fr-FR')}</p>
 
         <div className="flex items-center gap-3 mt-2 text-text-muted text-sm">
           <div className="flex items-center gap-1">
@@ -106,7 +105,7 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
           const infos = getInfosCles(annonce)
           if (infos.length === 0) return null
           return (
-            <div className="mt-4 bg-card rounded-[12px] overflow-hidden">
+            <div className="mt-4 rounded-[12px] overflow-hidden" style={{ border: '1px solid #F0F0F0', background: '#FAFAFA' }}>
               <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                 {infos.map((info, i) => (
                   <div
@@ -116,11 +115,11 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
                       minWidth: 80,
                       padding: '14px 12px',
                       textAlign: 'center',
-                      borderRight: i < infos.length - 1 ? '1px solid #EBEBEB' : undefined,
+                      borderRight: i < infos.length - 1 ? '1px solid #EFEFEF' : undefined,
                     }}
                   >
-                    <p style={{ fontSize: 11, color: '#888888', marginBottom: 4 }}>{info.label}</p>
-                    <p style={{ fontSize: 14, fontWeight: 700, color: '#496977' }}>{info.valeur}</p>
+                    <p style={{ fontSize: 11, color: '#AAAAAA', marginBottom: 4 }}>{info.label}</p>
+                    <p style={{ fontSize: 14, fontWeight: 500, color: '#1A1A1A' }}>{info.valeur}</p>
                   </div>
                 ))}
               </div>

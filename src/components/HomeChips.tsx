@@ -30,8 +30,8 @@ export default function HomeChips() {
       className="flex gap-2 overflow-x-auto px-4 pb-1"
       style={{ scrollbarWidth: 'none', marginTop: 20 }}
     >
-      {/* Voir tout — navigue vers la page recherche (modale) */}
-      <Link href="/recherche" style={chipStyle('#E8F0F3')}>
+      {/* Voir tout — navigue vers la page catégories (même que navbar Recherche) */}
+      <Link href="/categories" style={chipStyle('#E8F0F3')}>
         <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <GridFourIcon size={14} color="#404040" weight="fill" />
         </div>

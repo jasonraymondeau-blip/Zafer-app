@@ -47,7 +47,7 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
   const emoji = categorie === 'vehicule' ? '🚗' : categorie === 'immobilier' ? '🏠' : '🛋️'
 
   return (
-    <div className="relative aspect-[4/3] bg-card overflow-hidden select-none" style={{ borderRadius: '0 0 28px 28px' }}>
+    <div className="relative aspect-[4/3] bg-card overflow-hidden select-none" style={{ borderRadius: 0 }}>
       {hasPhotos ? (
         <>
           {/* Piste de photos — chaque photo est positionnée en absolu */}
@@ -112,14 +112,14 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
 
           {/* Compteur haut droite */}
           {photos.length > 1 && (
-            <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">
+            <div className="absolute right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10" style={{ bottom: 28 }}>
               {index + 1}/{photos.length}
             </div>
           )}
 
           {/* Points indicateurs */}
           {photos.length > 1 && (
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+            <div className="absolute left-1/2 -translate-x-1/2 flex gap-1.5 z-10" style={{ bottom: 28 }}>
               {photos.map((_, i) => (
                 <button
                   key={i}

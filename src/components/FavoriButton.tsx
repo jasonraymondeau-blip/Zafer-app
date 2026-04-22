@@ -7,12 +7,12 @@ import { createClient } from '@/lib/supabase-browser'
 
 interface FavoriButtonProps {
   listingId: string
-  // 'sm' pour ListingCard, 'md' pour la page détail
   size?: 'sm' | 'md'
+  ghost?: boolean
   className?: string
 }
 
-export default function FavoriButton({ listingId, size = 'sm', className = '' }: FavoriButtonProps) {
+export default function FavoriButton({ listingId, size = 'sm', ghost = false, className = '' }: FavoriButtonProps) {
   const supabase = createClient()
   const router = useRouter()
 
@@ -83,7 +83,7 @@ export default function FavoriButton({ listingId, size = 'sm', className = '' }:
       onClick={handleToggle}
       disabled={loading}
       aria-label={estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-      className={`flex items-center gap-1 bg-white rounded-full ${btnSize} shadow transition-transform active:scale-90 disabled:opacity-50 ${className}`}
+      className={`flex items-center gap-1 rounded-full ${btnSize} transition-transform active:scale-90 disabled:opacity-50 ${ghost ? '' : 'bg-white shadow'} ${className}`}
     >
       <Heart
         className={`${iconSize} transition-colors`}

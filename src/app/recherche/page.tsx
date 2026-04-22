@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import SearchModal from '@/components/SearchModal'
 import FilterSheet from '@/components/FilterSheet'
 import CategoryModal from '@/components/CategoryModal'
@@ -40,6 +41,10 @@ interface RecherchePageProps {
 
 
 export default async function RecherchePage({ searchParams }: RecherchePageProps) {
+  // Redirige vers /categories si aucun filtre n'est passé (accès direct sans contexte)
+  const hasParams = Object.values(searchParams).some((v) => v && String(v).trim() !== '')
+  if (!hasParams) redirect('/categories')
+
   const {
     q = '',
     categorie = '',

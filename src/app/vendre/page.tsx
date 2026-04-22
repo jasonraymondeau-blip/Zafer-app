@@ -357,12 +357,22 @@ export default function VendrePage() {
         {categorie === 'vehicule' && (isVoiture || (isLocationPro && vehiculeType === 'voiture')) && (
           <div>
             <label className="block text-sm font-semibold text-text-main mb-2">Boîte de vitesse</label>
-            <div className="flex gap-4">
-              {['automatique', 'manuelle'].map((bv) => (
-                <label key={bv} className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" checked={boiteVitesse === bv} onChange={() => setBoiteVitesse(bv)} className="accent-primary" />
-                  <span className="text-sm capitalize">{bv}</span>
-                </label>
+            <div className="flex gap-2">
+              {(['automatique', 'manuelle'] as const).map((bv) => (
+                <button
+                  key={bv}
+                  type="button"
+                  onClick={() => setBoiteVitesse(boiteVitesse === bv ? '' : bv)}
+                  style={{
+                    padding: '9px 16px', borderRadius: 12, fontSize: 14, fontWeight: 500,
+                    border: boiteVitesse === bv ? '1px solid #1A1A1A' : '1px solid #E5E5E5',
+                    background: boiteVitesse === bv ? '#1A1A1A' : '#FAFAFA',
+                    color: boiteVitesse === bv ? '#FFFFFF' : '#1A1A1A',
+                    cursor: 'pointer', textTransform: 'capitalize',
+                  }}
+                >
+                  {bv}
+                </button>
               ))}
             </div>
           </div>
@@ -388,23 +398,43 @@ export default function VendrePage() {
           <>
             <div>
               <label className="block text-sm font-semibold text-text-main mb-2">Durée de location</label>
-              <div className="flex gap-4">
-                {[{ label: 'Court terme', val: 'court' }, { label: 'Long terme', val: 'long' }].map(({ label, val }) => (
-                  <label key={val} className="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" checked={locationType === val} onChange={() => setLocationType(val)} className="accent-primary" />
-                    <span className="text-sm">{label}</span>
-                  </label>
+              <div className="flex gap-2">
+                {([{ label: 'Court terme', val: 'court' }, { label: 'Long terme', val: 'long' }] as const).map(({ label, val }) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setLocationType(locationType === val ? '' : val)}
+                    style={{
+                      padding: '9px 16px', borderRadius: 12, fontSize: 14, fontWeight: 500,
+                      border: locationType === val ? '1px solid #1A1A1A' : '1px solid #E5E5E5',
+                      background: locationType === val ? '#1A1A1A' : '#FAFAFA',
+                      color: locationType === val ? '#FFFFFF' : '#1A1A1A',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {label}
+                  </button>
                 ))}
               </div>
             </div>
             <div>
               <label className="block text-sm font-semibold text-text-main mb-2">Type de véhicule</label>
-              <div className="flex gap-4">
-                {[{ label: 'Voiture', val: 'voiture' }, { label: 'Moto', val: 'moto' }, { label: 'Scooter', val: 'scooter' }].map(({ label, val }) => (
-                  <label key={val} className="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" checked={vehiculeType === val} onChange={() => { setVehiculeType(val); setBoiteVitesse('') }} className="accent-primary" />
-                    <span className="text-sm">{label}</span>
-                  </label>
+              <div className="flex gap-2">
+                {([{ label: 'Voiture', val: 'voiture' }, { label: 'Moto', val: 'moto' }, { label: 'Scooter', val: 'scooter' }] as const).map(({ label, val }) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => { setVehiculeType(vehiculeType === val ? '' : val); setBoiteVitesse('') }}
+                    style={{
+                      padding: '9px 16px', borderRadius: 12, fontSize: 14, fontWeight: 500,
+                      border: vehiculeType === val ? '1px solid #1A1A1A' : '1px solid #E5E5E5',
+                      background: vehiculeType === val ? '#1A1A1A' : '#FAFAFA',
+                      color: vehiculeType === val ? '#FFFFFF' : '#1A1A1A',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {label}
+                  </button>
                 ))}
               </div>
             </div>
@@ -442,12 +472,22 @@ export default function VendrePage() {
             {(sousCategorie === 'Location' || sousCategorie === 'Location Saisonnière') && (
               <div>
                 <label className="block text-sm font-semibold text-text-main mb-2">Meublé</label>
-                <div className="flex gap-4">
-                  {[{ label: 'Meublé', val: true }, { label: 'Non meublé', val: false }].map(({ label, val }) => (
-                    <label key={label} className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" checked={meuble === val} onChange={() => setMeuble(val)} className="accent-primary" />
-                      <span className="text-sm">{label}</span>
-                    </label>
+                <div className="flex gap-2">
+                  {([{ label: 'Meublé', val: true }, { label: 'Non meublé', val: false }] as const).map(({ label, val }) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => setMeuble(meuble === val ? null : val)}
+                      style={{
+                        padding: '9px 16px', borderRadius: 12, fontSize: 14, fontWeight: 500,
+                        border: meuble === val ? '1px solid #1A1A1A' : '1px solid #E5E5E5',
+                        background: meuble === val ? '#1A1A1A' : '#FAFAFA',
+                        color: meuble === val ? '#FFFFFF' : '#1A1A1A',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {label}
+                    </button>
                   ))}
                 </div>
               </div>
@@ -459,12 +499,26 @@ export default function VendrePage() {
         {categorie === 'maison' && (
           <div>
             <label className="block text-sm font-semibold text-text-main mb-2">État</label>
-            <div className="flex gap-4 flex-wrap">
-              {['neuf', 'bon état', 'à réparer'].map((e) => (
-                <label key={e} className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" checked={etat === e} onChange={() => setEtat(e)} className="accent-primary" />
-                  <span className="text-sm capitalize">{e}</span>
-                </label>
+            <div className="flex gap-2 flex-wrap">
+              {(['neuf', 'bon état', 'à réparer'] as const).map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setEtat(etat === val ? '' : val)}
+                  style={{
+                    padding: '9px 16px',
+                    borderRadius: 12,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    border: etat === val ? '1px solid #1A1A1A' : '1px solid #E5E5E5',
+                    background: etat === val ? '#1A1A1A' : '#FAFAFA',
+                    color: etat === val ? '#FFFFFF' : '#1A1A1A',
+                    cursor: 'pointer',
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {val}
+                </button>
               ))}
             </div>
           </div>
