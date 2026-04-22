@@ -17,9 +17,10 @@ export default function IndiceConfiance({ user }: { user: User }) {
 
   useEffect(() => {
     async function charger() {
-      const [profileRes, listingsRes] = await Promise.all([
+      const [profileRes, listingsRes, avisRes] = await Promise.all([
         supabase.from('profiles').select('prenom, nom, telephone').eq('id', user.id).single(),
         supabase.from('listings').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabase.from('avis').select('id', { count: 'exact', head: true }).eq('acheteur_id', user.id),
       ])
       const p = profileRes.data
       const liste = [
@@ -27,7 +28,7 @@ export default function IndiceConfiance({ user }: { user: User }) {
         !!user.email_confirmed_at,
         !!(p?.prenom && p?.nom),
         (listingsRes.count ?? 0) > 0,
-        false,
+        !avisRes.error && (avisRes.count ?? 0) > 0,
       ]
       setAtteints(liste)
       setScore(liste.filter(Boolean).length * POINTS_PAR_CRITERE)

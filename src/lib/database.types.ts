@@ -116,6 +116,36 @@ export type Database = {
         }
         Relationships: []
       }
+      avis: {
+        Row: {
+          id: string
+          vendeur_id: string
+          acheteur_id: string
+          listing_id: string
+          note: number
+          commentaire: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          vendeur_id: string
+          acheteur_id: string
+          listing_id: string
+          note: number
+          commentaire?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          vendeur_id?: string
+          acheteur_id?: string
+          listing_id?: string
+          note?: number
+          commentaire?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       favoris: {
         Row: {
           id: string

@@ -6,6 +6,7 @@ import { getListing, getProfile } from '@/lib/listings'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import { getCoordsVille } from '@/lib/cities'
 import AnnonceImageSection from '@/components/AnnonceImageSection'
+import AvisSection from '@/components/AvisSection'
 import type { Listing } from '@/lib/supabase'
 
 // Import dynamique pour éviter les erreurs SSR de Leaflet
@@ -164,6 +165,9 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
             </p>
           </div>
         </div>
+
+        {/* Avis acheteurs */}
+        <AvisSection vendeurId={annonce.user_id} listingId={annonce.id} />
       </div>
 
       {/* Bouton WhatsApp — limité à max-w-lg */}
