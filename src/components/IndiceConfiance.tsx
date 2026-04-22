@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-browser'
 import type { User } from '@supabase/supabase-js'
 
-const COULEUR = '#FBB13C'
+const COULEUR = '#0ad3ff'
 const POINTS_PAR_CRITERE = 20
 const NB_CRITERES = 5
 
