@@ -13,6 +13,7 @@ import {
 } from '@phosphor-icons/react/dist/ssr'
 import { createClient } from '@/lib/supabase-browser'
 import type { User } from '@supabase/supabase-js'
+import IndiceConfiance from '@/components/IndiceConfiance'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const menuItems: { href: string; Icon: any; label: string }[] = [
@@ -187,6 +188,8 @@ export default function AuthGate() {
             </div>
           </div>
         </div>
+
+        <IndiceConfiance user={user} />
 
         <div className="px-4 py-2">
           {menuItems.map(({ href, Icon, label }) => (
