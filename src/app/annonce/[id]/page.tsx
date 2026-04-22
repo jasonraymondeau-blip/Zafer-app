@@ -119,10 +119,12 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
                     borderBottom: i < infos.length - 1 ? '1px solid #F0F0F0' : undefined,
                   }}
                 >
-                  <Icon style={{ width: 24, height: 24, color: '#AAAAAA', flexShrink: 0 }} />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1A1A' }}>{valeur}</span>
-                    <span style={{ fontSize: 12, color: '#6B7B84' }}>{label}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <Icon style={{ width: 18, height: 18, color: '#1A1A1A', flexShrink: 0 }} />
+                      <span style={{ fontSize: 14, fontWeight: 600, color: '#1A1A1A' }}>{label}</span>
+                    </div>
+                    <span style={{ fontSize: 14, color: '#555555', paddingLeft: 26 }}>{valeur}</span>
                   </div>
                 </div>
               ))}
