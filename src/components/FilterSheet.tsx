@@ -446,7 +446,7 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
                   <div>
                     <label className="block text-sm font-semibold text-text-main mb-2">Type de bien</label>
                     <div className="space-y-1">
-                      {['maison', 'appartement', 'commerce'].map((t) => (
+                      {['maison', 'appartement', 'terrain', 'commerce'].map((t) => (
                         <CheckboxItem key={t} label={t} active={isMultiActive('type_bien', t)}
                           onClick={() => toggleMulti('type_bien', t)} />
                       ))}
@@ -552,7 +552,7 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
               </div>
 
               {/* Actions — fixe en bas */}
-              <div className="flex gap-3 px-4 py-4 border-t border-gray-100 flex-shrink-0">
+              <div className="flex gap-3 px-4 pt-4 pb-6 border-t border-gray-100 flex-shrink-0" style={{ paddingBottom: 'max(24px, env(safe-area-inset-bottom, 24px))' }}>
                 <button onClick={handleReinitialiser}
                   className="flex-1 py-3 rounded-[12px] border border-gray-200 text-sm font-semibold text-text-main">
                   Réinitialiser

@@ -9,7 +9,7 @@ import CityInput from '@/components/CityInput'
 
 const sousCategories: Record<string, string[]> = {
   vehicule: ['Voiture', 'Scooter', 'Moto', 'Bateau'],
-  immobilier: ['Location', 'Vente', 'Location Saisonnière', 'Commerce', 'Terrain'],
+  immobilier: ['Location', 'Vente', 'Location Saisonnière', 'Commerce'],
   maison: ['Ameublement', 'Électroménager'],
 }
 
@@ -48,6 +48,7 @@ export default function VendrePage() {
   // UI
   const [loading, setLoading] = useState(false)
   const [erreur, setErreur] = useState('')
+  const [avertissementIA, setAvertissementIA] = useState('')
   const [authCheck, setAuthCheck] = useState(true)
 
   // Redirige immédiatement vers /compte si non connecté
@@ -167,7 +168,7 @@ export default function VendrePage() {
       }))
 
       // Insertion de l'annonce
-      const { data: listing, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('listings')
         .insert({
           user_id: user.id,
@@ -192,12 +193,29 @@ export default function VendrePage() {
           piece: piece || null,
           type_electromenager: typeElectromenager || null,
         })
-        .select('id')
-        .single()
 
       if (insertError) throw insertError
 
-      router.replace(`/annonce/${listing!.id}`)
+      // Vérification IA des photos — non bloquante
+      if (photoUrls.length > 0) {
+        try {
+          const verif = await fetch('/api/verifier-annonce', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ photos: photoUrls, categorie, sousCategorie, titre }),
+          })
+          const data = await verif.json()
+          if (!data.ok && !data.skipped) {
+            setAvertissementIA(data.message ?? 'Images inappropriées pour cette catégorie.')
+            setLoading(false)
+            // Redirige quand même après 4 s
+            setTimeout(() => router.replace('/compte/mes-annonces'), 4000)
+            return
+          }
+        } catch { /* ignore — la vérif est facultative */ }
+      }
+
+      router.replace('/compte/mes-annonces')
 
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Une erreur est survenue'
@@ -235,6 +253,14 @@ export default function VendrePage() {
         {erreur && (
           <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-[12px] px-4 py-3">
             {erreur}
+          </div>
+        )}
+
+        {avertissementIA && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-[12px] px-4 py-3">
+            <p className="font-semibold mb-1">⚠️ Vérification IA</p>
+            <p>{avertissementIA}</p>
+            <p className="mt-2 text-xs text-amber-600">Votre annonce a été publiée. Redirection dans quelques secondes…</p>
           </div>
         )}
 
@@ -395,6 +421,7 @@ export default function VendrePage() {
                 <option value="">Choisir</option>
                 <option value="maison">Maison</option>
                 <option value="appartement">Appartement</option>
+                {sousCategorie === 'Vente' && <option value="terrain">Terrain</option>}
               </select>
             </div>
             <div>
@@ -403,12 +430,15 @@ export default function VendrePage() {
                 type="number" placeholder="Ex: 85"
                 className="w-full border border-gray-200 rounded-[12px] px-4 py-3 text-sm outline-none focus:border-primary transition-colors" />
             </div>
+            {/* Chambres — non applicable pour un terrain */}
+            {typeBien !== 'terrain' && (
             <div>
               <label className="block text-sm font-semibold text-text-main mb-1.5">Nombre de chambres</label>
               <input value={nbChambres} onChange={(e) => setNbChambres(e.target.value)}
                 type="number" placeholder="Ex: 3" min="0"
                 className="w-full border border-gray-200 rounded-[12px] px-4 py-3 text-sm outline-none focus:border-primary transition-colors" />
             </div>
+            )}
             {(sousCategorie === 'Location' || sousCategorie === 'Location Saisonnière') && (
               <div>
                 <label className="block text-sm font-semibold text-text-main mb-2">Meublé</label>

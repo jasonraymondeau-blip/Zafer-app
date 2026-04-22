@@ -163,8 +163,8 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
       </div>
 
       {/* Bouton WhatsApp — limité à max-w-lg */}
-      <div className="fixed left-0 right-0 pointer-events-none" style={{ zIndex: 1000, bottom: 'calc(env(safe-area-inset-bottom, 0px) + 8px)' }}>
-        <div className="max-w-lg mx-auto px-4 pb-3 pt-6 bg-gradient-to-t from-white via-white/95 to-transparent pointer-events-auto">
+      <div className="fixed left-0 right-0 pointer-events-none" style={{ zIndex: 1000, bottom: 0 }}>
+        <div className="max-w-lg mx-auto px-4 pt-6 pointer-events-auto bg-gradient-to-t from-white via-white/95 to-transparent" style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom, 16px))' }}>
           {whatsappUrl ? (
             <a
               href={whatsappUrl}

@@ -1,7 +1,6 @@
 import SearchModal from '@/components/SearchModal'
 import FilterSheet from '@/components/FilterSheet'
 import CategoryModal from '@/components/CategoryModal'
-import BoutonRetour from '@/components/BoutonRetour'
 import ResultatsInfinisGrid from '@/components/ResultatsInfinisGrid'
 import SearchTracker from '@/components/SearchTracker'
 import { getListings } from '@/lib/listings'
@@ -132,14 +131,9 @@ export default async function RecherchePage({ searchParams }: RecherchePageProps
       {/* Sauvegarde la catégorie en localStorage pour la section personnalisée de l'accueil */}
       <SearchTracker categorie={categorie || undefined} />
 
-      {/* Header — titre + flèche retour + barre recherche */}
+      {/* Header — barre recherche */}
       <header className="sticky top-0 bg-white z-40 px-4 pt-4 pb-3 border-b border-gray-100">
-        <div className="flex items-center gap-2">
-          <BoutonRetour />
-          <div className="flex-1">
-            <SearchModal />
-          </div>
-        </div>
+        <SearchModal />
       </header>
 
       {/* Filtres */}
