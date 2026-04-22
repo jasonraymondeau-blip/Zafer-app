@@ -6,8 +6,8 @@ import { ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase-browser'
 import type { User } from '@supabase/supabase-js'
 
-const COULEUR = '#b85c38'
-const COULEUR_BG = '#fdf3ee'
+const COULEUR = '#FBB13C'
+const COULEUR_BG = '#fffbf0'
 const POINTS_PAR_CRITERE = 20
 
 interface Badge {
@@ -207,7 +207,7 @@ export default function ConfiancePage() {
                 alignItems: 'center',
                 gap: 14,
                 background: badge.atteint ? COULEUR_BG : '#FAFAFA',
-                border: `1.5px solid ${badge.atteint ? '#e8c4b0' : '#EFEFEF'}`,
+                border: `1.5px solid ${badge.atteint ? '#fdd88a' : '#EFEFEF'}`,
                 borderRadius: 14,
                 padding: '14px 14px',
                 transition: 'all 0.2s',
@@ -283,7 +283,7 @@ export default function ConfiancePage() {
                     fontWeight: 700,
                     color: badge.atteint ? COULEUR : '#CCCCCC',
                     background: badge.atteint ? '#fff' : '#F0F0F0',
-                    border: `1px solid ${badge.atteint ? '#e8c4b0' : '#E8E8E8'}`,
+                    border: `1px solid ${badge.atteint ? '#fdd88a' : '#E8E8E8'}`,
                     borderRadius: 99,
                     padding: '2px 8px',
                     flexShrink: 0,
