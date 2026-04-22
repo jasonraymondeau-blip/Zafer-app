@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import { MapPin, Calendar } from 'lucide-react'
+import { MapPin, Calendar, Ruler, Home, Tag, BedDouble, Sofa, Gauge, Settings2, Fuel, Car, Package, Wrench } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { getListing, getProfile } from '@/lib/listings'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import { getCoordsVille } from '@/lib/cities'
@@ -16,24 +17,24 @@ interface AnnoncePageProps {
 
 
 // Retourne les informations clés à afficher selon la catégorie
-function getInfosCles(annonce: Listing): Array<{ label: string; valeur: string }> {
+function getInfosCles(annonce: Listing): Array<{ label: string; valeur: string; Icon: LucideIcon }> {
   const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-  const infos: Array<{ label: string; valeur: string }> = []
+  const infos: Array<{ label: string; valeur: string; Icon: LucideIcon }> = []
 
   if (annonce.categorie === 'immobilier') {
-    if (annonce.surface) infos.push({ label: 'Surface', valeur: `${annonce.surface} m²` })
-    if (annonce.type_bien) infos.push({ label: 'Type de bien', valeur: cap(annonce.type_bien) })
-    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie })
-    if (annonce.nb_chambres != null) infos.push({ label: 'Chambres', valeur: String(annonce.nb_chambres) })
-    if (annonce.meuble != null) infos.push({ label: 'Meublé', valeur: annonce.meuble ? 'Oui' : 'Non' })
+    if (annonce.surface) infos.push({ label: 'Surface', valeur: `${annonce.surface} m²`, Icon: Ruler })
+    if (annonce.type_bien) infos.push({ label: 'Type de bien', valeur: cap(annonce.type_bien), Icon: Home })
+    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie, Icon: Tag })
+    if (annonce.nb_chambres != null) infos.push({ label: 'Chambres', valeur: String(annonce.nb_chambres), Icon: BedDouble })
+    if (annonce.meuble != null) infos.push({ label: 'Meublé', valeur: annonce.meuble ? 'Oui' : 'Non', Icon: Sofa })
   } else if (annonce.categorie === 'vehicule') {
-    if (annonce.kilometrage) infos.push({ label: 'Kilométrage', valeur: `${annonce.kilometrage.toLocaleString()} km` })
-    if (annonce.boite_vitesse) infos.push({ label: 'Boîte', valeur: cap(annonce.boite_vitesse) })
-    if (annonce.carburant) infos.push({ label: 'Carburant', valeur: cap(annonce.carburant) })
-    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie })
+    if (annonce.kilometrage) infos.push({ label: 'Kilométrage', valeur: `${annonce.kilometrage.toLocaleString()} km`, Icon: Gauge })
+    if (annonce.boite_vitesse) infos.push({ label: 'Boîte', valeur: cap(annonce.boite_vitesse), Icon: Settings2 })
+    if (annonce.carburant) infos.push({ label: 'Carburant', valeur: cap(annonce.carburant), Icon: Fuel })
+    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie, Icon: Car })
   } else if (annonce.categorie === 'maison') {
-    if (annonce.etat) infos.push({ label: 'État', valeur: cap(annonce.etat) })
-    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie })
+    if (annonce.etat) infos.push({ label: 'État', valeur: cap(annonce.etat), Icon: Wrench })
+    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie, Icon: Package })
   }
 
   return infos
@@ -100,29 +101,29 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
           </div>
         </div>
 
-        {/* Informations clés — blocs horizontaux style design */}
+        {/* Informations clés — liste verticale avec icônes */}
         {(() => {
           const infos = getInfosCles(annonce)
           if (infos.length === 0) return null
           return (
-            <div className="mt-4 rounded-[12px] overflow-hidden" style={{ border: '1px solid #F0F0F0', background: '#FAFAFA' }}>
-              <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-                {infos.map((info, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      flex: '1 0 auto',
-                      minWidth: 80,
-                      padding: '14px 12px',
-                      textAlign: 'center',
-                      borderRight: i < infos.length - 1 ? '1px solid #EFEFEF' : undefined,
-                    }}
-                  >
-                    <p style={{ fontSize: 11, color: '#AAAAAA', marginBottom: 4 }}>{info.label}</p>
-                    <p style={{ fontSize: 14, fontWeight: 500, color: '#1A1A1A' }}>{info.valeur}</p>
-                  </div>
-                ))}
-              </div>
+            <div className="mt-4">
+              {infos.map(({ label, valeur, Icon }, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    paddingTop: 12,
+                    paddingBottom: 12,
+                    borderBottom: i < infos.length - 1 ? '1px solid #F0F0F0' : undefined,
+                  }}
+                >
+                  <Icon style={{ width: 18, height: 18, color: '#AAAAAA', flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, color: '#888888', minWidth: 100 }}>{label}</span>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: '#1A1A1A' }}>{valeur}</span>
+                </div>
+              ))}
             </div>
           )
         })()}
