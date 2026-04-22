@@ -5,6 +5,26 @@ import { useRouter } from 'next/navigation'
 import { SlidersHorizontal, X, MapPin, Loader, Check } from 'lucide-react'
 import CityInput from './CityInput'
 
+const SOUS_CATEGORIES: Record<string, { value: string; label: string }[]> = {
+  vehicule: [
+    { value: 'Voiture', label: 'Voiture' },
+    { value: 'Scooter', label: 'Scooter' },
+    { value: 'Moto', label: 'Moto' },
+    { value: 'Bateau', label: 'Bateau' },
+    { value: 'Location Professionnelle', label: 'Location Pro' },
+  ],
+  immobilier: [
+    { value: 'Location', label: 'Location' },
+    { value: 'Vente', label: 'Vente' },
+    { value: 'Location Saisonnière', label: 'Saisonnière' },
+    { value: 'Commerce', label: 'Commerce' },
+  ],
+  maison: [
+    { value: 'Ameublement', label: 'Ameublement' },
+    { value: 'Électroménager', label: 'Électroménager' },
+  ],
+}
+
 interface FilterValues {
   prix_min: string
   prix_max: string
@@ -104,8 +124,10 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
   const [ouvert, setOuvert] = useState(false)
   const [valeurs, setValeurs] = useState<FilterValues>({ ...current })
   const [geoLoading, setGeoLoading] = useState(false)
+  const [localCategorie, setLocalCategorie] = useState(categorie)
+  const [localSousCategorie, setLocalSousCategorie] = useState(sousCategorie)
 
-  const champs = getChampsActifs(categorie, sousCategorie)
+  const champs = getChampsActifs(localCategorie, localSousCategorie)
   const nbFiltres = countFiltresActifs(current, categorie, sousCategorie)
 
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -156,8 +178,8 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
   function handleAppliquer() {
     const params = new URLSearchParams()
     if (q) params.set('q', q)
-    if (categorie) params.set('categorie', categorie)
-    if (sousCategorie) params.set('sous_categorie', sousCategorie)
+    if (localCategorie) params.set('categorie', localCategorie)
+    if (localSousCategorie) params.set('sous_categorie', localSousCategorie)
     if (valeurs.prix_min) params.set('prix_min', valeurs.prix_min)
     if (valeurs.prix_max) params.set('prix_max', valeurs.prix_max)
     if (valeurs.km_min) params.set('km_min', valeurs.km_min)
@@ -197,10 +219,10 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
       lat: '', lng: '',
     }
     setValeurs(vide)
+    setLocalCategorie('')
+    setLocalSousCategorie('')
     const params = new URLSearchParams()
     if (q) params.set('q', q)
-    if (categorie) params.set('categorie', categorie)
-    if (sousCategorie) params.set('sous_categorie', sousCategorie)
     router.push(`/recherche?${params.toString()}`)
     setOuvert(false)
   }
@@ -215,7 +237,7 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
     <>
       {/* Bouton filtres */}
       <button
-        onClick={() => { setValeurs({ ...current }); setOuvert(true) }}
+        onClick={() => { setValeurs({ ...current }); setLocalCategorie(categorie); setLocalSousCategorie(sousCategorie); setOuvert(true) }}
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-medium bg-white relative ${
           nbFiltres > 0 ? 'border-[#1A1A1A] text-[#1A1A1A]' : 'border-gray-200 text-text-main'
         }`}
@@ -252,6 +274,37 @@ export default function FilterSheet({ categorie, sousCategorie, q, current }: Fi
 
               {/* Champs — scrollable */}
               <div className="px-4 py-4 space-y-6 overflow-y-auto flex-1">
+
+                {/* ── CATÉGORIE ──────────────────────────────────── */}
+                <div>
+                  <label className="block text-sm font-semibold text-text-main mb-2">Catégorie</label>
+                  <div className="flex gap-2">
+                    {[
+                      { value: 'vehicule', label: 'Véhicule' },
+                      { value: 'immobilier', label: 'Immobilier' },
+                      { value: 'maison', label: 'Maison' },
+                    ].map((c) => (
+                      <ChipButton key={c.value} label={c.label} active={localCategorie === c.value}
+                        onClick={() => {
+                          setLocalCategorie(localCategorie === c.value ? '' : c.value)
+                          setLocalSousCategorie('')
+                        }} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* ── SOUS-CATÉGORIE ──────────────────────────────── */}
+                {localCategorie && (
+                  <div>
+                    <label className="block text-sm font-semibold text-text-main mb-2">Sous-catégorie</label>
+                    <div className="flex flex-wrap gap-2">
+                      {SOUS_CATEGORIES[localCategorie]?.map((sc) => (
+                        <ChipButton key={sc.value} label={sc.label} active={localSousCategorie === sc.value}
+                          onClick={() => setLocalSousCategorie(localSousCategorie === sc.value ? '' : sc.value)} />
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* ── AUTOUR DE MOI (toutes catégories) ──────────── */}
                 <div>
