@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 
 interface PhotoCarouselProps {
   photos: string[]
@@ -13,7 +13,9 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
   const [index, setIndex] = useState(0)
   const [dragX, setDragX] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
   const touchStartX = useRef<number | null>(null)
+  const wasDragged = useRef(false)
   const hasPhotos = photos && photos.length > 0
 
   function goTo(i: number) {
@@ -24,12 +26,13 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
     touchStartX.current = e.touches[0].clientX
     setIsDragging(true)
     setDragX(0)
+    wasDragged.current = false
   }
 
   function handleTouchMove(e: React.TouchEvent) {
     if (touchStartX.current === null) return
     const delta = e.touches[0].clientX - touchStartX.current
-    // Résistance aux bords — facteur 0.3 si on essaie de dépasser
+    if (Math.abs(delta) > 8) wasDragged.current = true
     const resistance = (index === 0 && delta > 0) || (index === photos.length - 1 && delta < 0)
     setDragX(resistance ? delta * 0.3 : delta)
   }
@@ -44,13 +47,20 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
     else if (delta > 50) goTo(index - 1)
   }
 
+  function handleClick() {
+    if (!wasDragged.current && hasPhotos) setLightboxOpen(true)
+  }
+
   const emoji = categorie === 'vehicule' ? '🚗' : categorie === 'immobilier' ? '🏠' : '🛋️'
 
-  return (
-    <div className="relative aspect-[4/3] bg-card overflow-hidden select-none" style={{ borderRadius: 0 }}>
+  const carousel = (
+    <div
+      className="relative aspect-[4/3] overflow-hidden select-none"
+      style={{ borderRadius: 0, background: '#1a1a1a' }}
+      onClick={handleClick}
+    >
       {hasPhotos ? (
         <>
-          {/* Piste de photos — chaque photo est positionnée en absolu */}
           {photos.map((photo, i) => {
             const offset = (i - index) * 100
             return (
@@ -73,19 +83,18 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
                 <img
                   src={photo}
                   alt={i === 0 ? titre : ''}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                   draggable={false}
                 />
               </div>
             )
           })}
 
-          {/* Flèches — masquées si première/dernière photo */}
           {photos.length > 1 && (
             <>
               <button
-                onClick={() => goTo(index - 1)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 transition-all z-10"
+                onClick={(e) => { e.stopPropagation(); goTo(index - 1) }}
+                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 z-10"
                 style={{
                   background: 'rgba(0,0,0,0.4)',
                   opacity: index === 0 ? 0 : 1,
@@ -96,8 +105,8 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
                 <ChevronLeft className="w-5 h-5 text-white" />
               </button>
               <button
-                onClick={() => goTo(index + 1)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 transition-all z-10"
+                onClick={(e) => { e.stopPropagation(); goTo(index + 1) }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 z-10"
                 style={{
                   background: 'rgba(0,0,0,0.4)',
                   opacity: index === photos.length - 1 ? 0 : 1,
@@ -110,20 +119,18 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
             </>
           )}
 
-          {/* Compteur haut droite */}
           {photos.length > 1 && (
             <div className="absolute right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10" style={{ bottom: 28 }}>
               {index + 1}/{photos.length}
             </div>
           )}
 
-          {/* Points indicateurs */}
           {photos.length > 1 && (
             <div className="absolute left-1/2 -translate-x-1/2 flex gap-1.5 z-10" style={{ bottom: 28 }}>
               {photos.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => goTo(i)}
+                  onClick={(e) => { e.stopPropagation(); goTo(i) }}
                   style={{
                     width: 6, height: 6, borderRadius: '50%',
                     background: i === index ? '#fff' : 'rgba(255,255,255,0.5)',
@@ -141,5 +148,83 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
         </div>
       )}
     </div>
+  )
+
+  return (
+    <>
+      {carousel}
+
+      {/* Lightbox plein écran */}
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-[200] bg-black flex flex-col"
+          style={{ paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        >
+          {/* Header lightbox */}
+          <div className="flex items-center justify-between px-4 py-3 flex-shrink-0">
+            <span className="text-white/60 text-sm">
+              {photos.length > 1 ? `${index + 1} / ${photos.length}` : ''}
+            </span>
+            <button
+              onClick={() => setLightboxOpen(false)}
+              className="bg-white/10 rounded-full p-2"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
+
+          {/* Zone photo scrollable */}
+          <div
+            className="flex-1 relative overflow-hidden"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {photos.map((photo, i) => {
+              const offset = (i - index) * 100
+              return (
+                <div
+                  key={i}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    transform: isDragging
+                      ? `translateX(calc(${offset}% + ${dragX}px))`
+                      : `translateX(${offset}%)`,
+                    transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photo}
+                    alt=""
+                    className="w-full h-full object-contain"
+                    draggable={false}
+                  />
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Points indicateurs en bas */}
+          {photos.length > 1 && (
+            <div className="flex justify-center gap-2 py-4 flex-shrink-0">
+              {photos.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  style={{
+                    width: 7, height: 7, borderRadius: '50%',
+                    background: i === index ? '#fff' : 'rgba(255,255,255,0.35)',
+                    transform: i === index ? 'scale(1.3)' : 'scale(1)',
+                    transition: 'all 0.2s',
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </>
   )
 }

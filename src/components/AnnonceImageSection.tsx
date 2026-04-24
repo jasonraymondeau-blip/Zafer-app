@@ -82,8 +82,8 @@ export default function AnnonceImageSection({
           categorie={categorie}
           initialActif={initialActif}
         />
-        {/* Boutons flottants sur l'image */}
-        <div className="absolute top-4 left-4 right-4 flex justify-between z-10">
+        {/* Boutons flottants sur l'image — décalés sous la safe area */}
+        <div className="absolute top-0 left-0 right-0 flex justify-between z-10 px-4" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)' }}>
           <BoutonRetour />
           <div className="flex gap-2">
             <BoutonPartage titre={titre} prix={prix} />

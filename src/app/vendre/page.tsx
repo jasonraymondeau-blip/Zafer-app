@@ -581,7 +581,7 @@ export default function VendrePage() {
 
         {/* Ville — avec autocomplétion sur les villes de l'île Maurice */}
         <div>
-          <label className="block text-sm font-semibold text-text-main mb-1.5">Ville</label>
+          <label className="block text-sm font-semibold text-text-main mb-1.5">Ville <span className="text-red-500">*</span></label>
           <CityInput
             value={ville}
             onChange={setVille}
@@ -590,7 +590,7 @@ export default function VendrePage() {
         </div>
 
         {/* Bouton publier */}
-        <button type="submit" disabled={loading || !categorie || !sousCategorie || !titre || !prix}
+        <button type="submit" disabled={loading || !categorie || !sousCategorie || !titre || !prix || !ville}
           className="w-full bg-primary hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-[6px] transition-colors text-sm mt-2">
           {loading ? 'Publication en cours...' : "Publier l'annonce"}
         </button>
