@@ -156,7 +156,7 @@ export default function CategoriesPage() {
     <>
       {/* Header */}
       <div style={{ borderBottom: '1px solid #F0F0F0' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px 12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 16px 12px' }}>
           <button
             onClick={retourListe}
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, marginLeft: -4 }}
@@ -416,7 +416,7 @@ export default function CategoriesPage() {
   const listeContent = (
     <>
       {/* Header */}
-      <div style={{ padding: '14px 16px 10px', borderBottom: '1px solid #F0F0F0', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 16px 10px', borderBottom: '1px solid #F0F0F0', display: 'flex', alignItems: 'center', gap: 10 }}>
         <button
           onClick={() => router.push('/')}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, marginLeft: -4, display: 'flex', alignItems: 'center' }}

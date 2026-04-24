@@ -244,7 +244,7 @@ export default function VendrePage() {
 
   return (
     <div className="max-w-lg mx-auto" style={{ paddingBottom: 96 }}>
-      <header className="sticky top-0 bg-white z-40 px-4 pt-4 pb-3 border-b border-gray-100 flex items-center gap-3">
+      <header className="sticky top-0 bg-white z-40 px-4 pb-3 border-b border-gray-100 flex items-center gap-3" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 16px)' }}>
         <Link href="/"><ArrowLeft className="w-5 h-5 text-text-main" /></Link>
         <h1 className="font-bold text-lg text-text-main">Déposer une annonce</h1>
       </header>

@@ -59,7 +59,7 @@ export default function FavorisPage() {
 
   return (
     <div className="max-w-lg mx-auto pb-24">
-      <header className="px-4 pt-4 pb-3 border-b border-gray-100">
+      <header className="px-4 pb-3 border-b border-gray-100" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 16px)' }}>
         <h1 className="text-lg font-bold text-text-main">Mes favoris</h1>
         {favoris.length > 0 && (
           <p className="text-text-muted text-xs mt-0.5">{favoris.length} annonce{favoris.length > 1 ? 's' : ''}</p>

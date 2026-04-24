@@ -56,7 +56,7 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
   const carousel = (
     <div
       className="relative overflow-hidden select-none"
-      style={{ borderRadius: 0, background: '#1a1a1a', aspectRatio: '4/5' }}
+      style={{ borderRadius: 0, background: '#1a1a1a', aspectRatio: '4/3' }}
       onClick={handleClick}
     >
       {hasPhotos ? (

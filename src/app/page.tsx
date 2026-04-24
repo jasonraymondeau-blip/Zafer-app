@@ -115,7 +115,7 @@ export default async function HomePage() {
     <div className="max-w-lg mx-auto bg-white min-h-screen" style={{ paddingBottom: 96 }}>
 
       {/* ── Header : salutation dynamique ── */}
-      <header style={{ padding: '24px 16px 0' }}>
+      <header style={{ padding: 'calc(env(safe-area-inset-top, 0px) + 24px) 16px 0' }}>
         <Greeting />
       </header>
 
