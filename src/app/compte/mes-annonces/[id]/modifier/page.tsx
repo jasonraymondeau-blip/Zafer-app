@@ -209,7 +209,7 @@ export default function ModifierAnnoncePage() {
 
       if (updateError) throw updateError
 
-      router.push(`/annonce/${id}`)
+      router.replace(`/annonce/${id}`)
     } catch (err: unknown) {
       setErreur(err instanceof Error ? err.message : 'Une erreur est survenue')
     } finally {
