@@ -2,7 +2,7 @@
 
 import { ChevronRight } from 'lucide-react'
 import { CarIcon, HouseIcon, ArmchairIcon } from '@phosphor-icons/react/dist/ssr'
-import { useSearchModal } from '@/contexts/SearchModalContext'
+import { useRouter } from 'next/navigation'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ICON_MAP: Record<string, React.ComponentType<any>> = {
@@ -16,14 +16,14 @@ interface Props {
   label: string
 }
 
-// En-tête de section catégorie — ouvre le modal avec la catégorie pré-sélectionnée
+// En-tête de section catégorie — navigue vers la page catégorie pré-sélectionnée
 export default function HomeCategoryHeader({ categorie, label }: Props) {
-  const { open } = useSearchModal()
+  const router = useRouter()
   const Icon = ICON_MAP[categorie]
 
   return (
     <button
-      onClick={() => open(categorie)}
+      onClick={() => router.push(`/categories?categorie=${categorie}`)}
       style={{
         width: '100%',
         display: 'flex',

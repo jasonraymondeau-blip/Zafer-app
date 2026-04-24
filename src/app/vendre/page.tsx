@@ -23,7 +23,8 @@ export default function VendrePage() {
   const [description, setDescription] = useState('')
   const [categorie, setCategorie] = useState('')
   const [sousCategorie, setSousCategorie] = useState('')
-  const [prix, setPrix] = useState('')
+  const [prix, setPrix] = useState('')         // valeur brute (chiffres uniquement)
+  const [prixDisplay, setPrixDisplay] = useState('') // valeur affichée avec séparateurs
   const [ville, setVille] = useState('')
   const [kilometrage, setKilometrage] = useState('')
   const [boiteVitesse, setBoiteVitesse] = useState('')
@@ -562,9 +563,19 @@ export default function VendrePage() {
           </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-text-muted font-medium">Rs</span>
-            <input value={prix} onChange={(e) => setPrix(e.target.value)}
-              type="number" placeholder="0" required min="0"
-              className="w-full border border-gray-200 rounded-[12px] pl-10 pr-4 py-3 text-sm outline-none focus:border-primary transition-colors" />
+            <input
+              value={prixDisplay}
+              onChange={(e) => {
+                const brut = e.target.value.replace(/[^\d]/g, '')
+                setPrix(brut)
+                setPrixDisplay(brut ? Number(brut).toLocaleString('fr-FR') : '')
+              }}
+              type="text"
+              inputMode="numeric"
+              placeholder="0"
+              required
+              className="w-full border border-gray-200 rounded-[12px] pl-10 pr-4 py-3 text-sm outline-none focus:border-primary transition-colors"
+            />
           </div>
         </div>
 

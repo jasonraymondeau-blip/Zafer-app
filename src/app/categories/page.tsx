@@ -155,7 +155,7 @@ export default function CategoriesPage() {
   const filtresContent = (
     <>
       {/* Header */}
-      <div style={{ flexShrink: 0, borderBottom: '1px solid #F0F0F0' }}>
+      <div style={{ borderBottom: '1px solid #F0F0F0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px 12px' }}>
           <button
             onClick={retourListe}
@@ -174,8 +174,8 @@ export default function CategoriesPage() {
         </div>
       </div>
 
-      {/* Filtres scrollables */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Filtres */}
+      <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         {/* Localisation */}
         <div>
@@ -390,8 +390,8 @@ export default function CategoriesPage() {
 
       </div>
 
-      {/* Bouton valider — ancré en bas du sheet */}
-      <div style={{ flexShrink: 0, padding: '12px 16px', paddingBottom: 'max(16px, env(safe-area-inset-bottom, 16px))', borderTop: '1px solid #F0F0F0' }}>
+      {/* Bouton valider */}
+      <div style={{ padding: '12px 16px 24px', borderTop: '1px solid #F0F0F0' }}>
         <button
           onClick={handleValider}
           style={{
@@ -416,7 +416,7 @@ export default function CategoriesPage() {
   const listeContent = (
     <>
       {/* Header */}
-      <div style={{ flexShrink: 0, padding: '14px 16px 10px', borderBottom: '1px solid #F0F0F0', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ padding: '14px 16px 10px', borderBottom: '1px solid #F0F0F0', display: 'flex', alignItems: 'center', gap: 10 }}>
         <button
           onClick={() => router.push('/')}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, marginLeft: -4, display: 'flex', alignItems: 'center' }}
@@ -426,8 +426,8 @@ export default function CategoriesPage() {
         <span style={{ fontSize: 17, fontWeight: 700, color: '#1A1A1A' }}>Catégories</span>
       </div>
 
-      {/* Liste scrollable */}
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      {/* Liste */}
+      <div>
         {CATEGORIES.map(({ id, label, Icon, sousCats }) => (
           <div key={id}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px 10px' }}>
@@ -457,40 +457,10 @@ export default function CategoriesPage() {
     </>
   )
 
-  // ── Shell modal ─────────────────────────────────────────────────────────
+  // ── Page catégorie ─────────────────────────────────────────────────────
   return (
-    <div
-      style={{ position: 'fixed', inset: 0, zIndex: 50 }}
-      onClick={() => router.push('/')}
-    >
-      {/* Backdrop semi-transparent */}
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)' }} />
-
-      {/* Sheet ancré en bas */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '100%',
-          maxWidth: 448,
-          height: '88vh',
-          background: '#FFFFFF',
-          borderRadius: '20px 20px 0 0',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Poignée */}
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 4px', flexShrink: 0 }}>
-          <div style={{ width: 40, height: 4, background: '#E0E0E0', borderRadius: 2 }} />
-        </div>
-
-        {step === 'filtres' ? filtresContent : listeContent}
-      </div>
+    <div style={{ maxWidth: 448, margin: '0 auto', background: '#FFFFFF' }}>
+      {step === 'filtres' ? filtresContent : listeContent}
     </div>
   )
 }
