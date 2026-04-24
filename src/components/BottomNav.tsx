@@ -42,7 +42,7 @@ export default function BottomNav() {
   }, [])
 
   // Masquer sur les pages détail annonce, recherche, catégories et quand un modal est ouvert
-  if (isOpen || isRechercheOpen || pathname.startsWith('/annonce/') || pathname.startsWith('/recherche') || pathname.startsWith('/categories')) return null
+  if (isOpen || isRechercheOpen || pathname.startsWith('/annonce/') || pathname.startsWith('/recherche') || pathname.startsWith('/categories') || pathname.includes('/modifier')) return null
 
   // Sur /compte, masquer si non connecté (affiche le formulaire de connexion)
   if (pathname === '/compte' && connecte !== true) return null
