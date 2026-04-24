@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface PhotoCarouselProps {
   photos: string[]
@@ -156,24 +156,31 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
 
       {/* Lightbox plein écran */}
       {lightboxOpen && (
-        <div
-          className="fixed inset-0 z-[200] bg-black flex flex-col"
-          style={{ paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-        >
-          {/* Header lightbox */}
-          <div className="flex items-center justify-between px-4 py-3 flex-shrink-0">
-            <span className="text-white/60 text-sm">
-              {photos.length > 1 ? `${index + 1} / ${photos.length}` : ''}
-            </span>
+        <div className="fixed inset-0 z-[200] bg-black flex flex-col">
+
+          {/* Header : flèche retour + titre + compteur */}
+          <div
+            className="flex-shrink-0 flex items-center justify-between px-4"
+            style={{
+              paddingTop: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+              paddingBottom: 14,
+            }}
+          >
             <button
               onClick={() => setLightboxOpen(false)}
-              className="bg-white/10 rounded-full p-2"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, marginLeft: -4, display: 'flex', alignItems: 'center' }}
             >
-              <X className="w-5 h-5 text-white" />
+              <ChevronLeft className="w-6 h-6 text-white" />
             </button>
+            <span className="text-white font-semibold text-base truncate mx-3 flex-1 text-center">
+              {titre}
+            </span>
+            <span className="text-white/70 text-sm flex-shrink-0">
+              {photos.length > 1 ? `${index + 1} / ${photos.length}` : ''}
+            </span>
           </div>
 
-          {/* Zone photo scrollable */}
+          {/* Zone photo swipeable */}
           <div
             className="flex-1 relative overflow-hidden"
             onTouchStart={handleTouchStart}
@@ -192,13 +199,16 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
                       ? `translateX(calc(${offset}% + ${dragX}px))`
                       : `translateX(${offset}%)`,
                     transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={photo}
                     alt=""
-                    className="w-full h-full object-contain"
+                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                     draggable={false}
                   />
                 </div>
@@ -206,23 +216,8 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
             })}
           </div>
 
-          {/* Points indicateurs en bas */}
-          {photos.length > 1 && (
-            <div className="flex justify-center gap-2 py-4 flex-shrink-0">
-              {photos.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  style={{
-                    width: 7, height: 7, borderRadius: '50%',
-                    background: i === index ? '#fff' : 'rgba(255,255,255,0.35)',
-                    transform: i === index ? 'scale(1.3)' : 'scale(1)',
-                    transition: 'all 0.2s',
-                  }}
-                />
-              ))}
-            </div>
-          )}
+          {/* Espace bas safe area */}
+          <div style={{ height: 'env(safe-area-inset-bottom, 0px)', flexShrink: 0 }} />
         </div>
       )}
     </>
