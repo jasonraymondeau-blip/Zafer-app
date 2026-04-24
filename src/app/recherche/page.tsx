@@ -136,9 +136,16 @@ export default async function RecherchePage({ searchParams }: RecherchePageProps
       {/* Sauvegarde la catégorie en localStorage pour la section personnalisée de l'accueil */}
       <SearchTracker categorie={categorie || undefined} />
 
-      {/* Header — barre recherche */}
+      {/* Header — flèche retour + barre recherche */}
       <header className="sticky top-0 bg-white z-40 px-4 pt-4 pb-3 border-b border-gray-100">
-        <SearchModal />
+        <div className="flex items-center gap-2">
+          <a href="/categories" aria-label="Retour aux catégories" className="flex-shrink-0 flex items-center justify-center" style={{ width: 36, height: 36 }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 15L7.5 10L12.5 5" stroke="#1A1A1A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </a>
+          <div className="flex-1">
+            <SearchModal />
+          </div>
+        </div>
       </header>
 
       {/* Filtres */}
