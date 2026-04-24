@@ -55,8 +55,8 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
 
   const carousel = (
     <div
-      className="relative aspect-[4/3] overflow-hidden select-none"
-      style={{ borderRadius: 0, background: '#1a1a1a' }}
+      className="relative overflow-hidden select-none"
+      style={{ borderRadius: 0, background: '#1a1a1a', aspectRatio: '4/5' }}
       onClick={handleClick}
     >
       {hasPhotos ? (
@@ -83,7 +83,7 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
                 <img
                   src={photo}
                   alt={i === 0 ? titre : ''}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                   draggable={false}
                 />
               </div>
