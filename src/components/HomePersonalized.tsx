@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Flame } from 'lucide-react'
+import { toThumbUrl } from '@/lib/r2-upload'
 import { createClient } from '@/lib/supabase-browser'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import FavoriButton from '@/components/FavoriButton'
@@ -30,7 +31,7 @@ function AnnonceCard({ listing }: { listing: Listing }) {
         <div className="relative w-full" style={{ aspectRatio: '4/5', borderRadius: 4, overflow: 'hidden' }}>
           {hasPhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={listing.photos[0]} alt={listing.titre} className="w-full h-full object-cover" />
+            <img src={toThumbUrl(listing.photos[0])} alt={listing.titre} className="w-full h-full object-cover" />
           ) : (
             <PhotoPlaceholder categorie={listing.categorie} />
           )}

@@ -4,23 +4,17 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronRight, ArrowLeft } from 'lucide-react'
-import {
-  UserIcon,
-  ClipboardTextIcon,
-  HeartIcon,
-  GearSixIcon,
-  SignOutIcon,
-} from '@phosphor-icons/react/dist/ssr'
+import { User, ClipboardList, Heart, Settings, LogOut } from 'lucide-react'
 import { createClient } from '@/lib/supabase-browser'
-import type { User } from '@supabase/supabase-js'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 import IndiceConfiance from '@/components/IndiceConfiance'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const menuItems: { href: string; Icon: any; label: string }[] = [
-  { href: '/compte/profil',       Icon: UserIcon,          label: 'Mon profil'    },
-  { href: '/compte/mes-annonces', Icon: ClipboardTextIcon, label: 'Mes annonces'  },
-  { href: '/favoris',             Icon: HeartIcon,         label: 'Mes favoris'   },
-  { href: '/compte/parametres',   Icon: GearSixIcon,       label: 'Paramètres'    },
+  { href: '/compte/profil',       Icon: User,          label: 'Mon profil'    },
+  { href: '/compte/mes-annonces', Icon: ClipboardList, label: 'Mes annonces'  },
+  { href: '/favoris',             Icon: Heart,         label: 'Mes favoris'   },
+  { href: '/compte/parametres',   Icon: Settings,      label: 'Paramètres'    },
 ]
 
 type Mode = 'connexion' | 'inscription' | 'mot-de-passe-oublie'
@@ -31,7 +25,7 @@ export default function AuthGate() {
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirect') || '/'
 
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
   const [chargement, setChargement] = useState(true)
   const [mode, setMode] = useState<Mode>('connexion')
   const [email, setEmail] = useState('')
@@ -199,7 +193,7 @@ export default function AuthGate() {
               className="flex items-center justify-between py-4 border-b border-gray-100 last:border-0"
             >
               <div className="flex items-center gap-3">
-                <Icon size={20} color="#404040" weight="regular" />
+                <Icon size={20} color="#404040" />
                 <span className="text-text-main text-sm font-medium">{label}</span>
               </div>
               <ChevronRight className="w-4 h-4 text-text-muted" />
@@ -210,7 +204,7 @@ export default function AuthGate() {
             onClick={handleDeconnexion}
             className="flex items-center gap-3 py-4 w-full"
           >
-            <SignOutIcon size={20} color="#ef4444" weight="regular" />
+            <LogOut size={20} color="#ef4444" />
             <span className="text-red-500 text-sm font-medium">Se déconnecter</span>
           </button>
         </div>

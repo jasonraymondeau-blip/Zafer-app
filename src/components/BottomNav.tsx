@@ -3,13 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import {
-  HouseIcon,
-  MagnifyingGlassIcon,
-  PlusIcon,
-  HeartIcon,
-  UserIcon,
-} from '@phosphor-icons/react/dist/ssr'
+import { Home, Search, Plus, Heart, User } from 'lucide-react'
 import { useSearchModal } from '@/contexts/SearchModalContext'
 import { useRechercheModal } from '@/contexts/RechercheModalContext'
 import { createClient } from '@/lib/supabase-browser'
@@ -79,20 +73,20 @@ export default function BottomNav() {
 
       {/* ── Accueil ── */}
       <Link href="/" aria-label="Accueil" style={itemStyle()}>
-        <HouseIcon
+        <Home
           size={ICON_SIZE}
           color={COULEUR_NAV}
-          weight={accueilActive ? 'fill' : 'light'}
+          fill={accueilActive ? COULEUR_NAV : 'none'}
         />
         <span style={labelStyle(accueilActive)}>Accueil</span>
       </Link>
 
       {/* ── Recherche — mène à la page catégories ── */}
       <Link href="/categories" aria-label="Recherche" style={itemStyle()}>
-        <MagnifyingGlassIcon
+        <Search
           size={ICON_SIZE}
           color={COULEUR_NAV}
-          weight={rechercheActive ? 'fill' : 'light'}
+          fill={rechercheActive ? COULEUR_NAV : 'none'}
         />
         <span style={labelStyle(rechercheActive)}>Recherche</span>
       </Link>
@@ -119,27 +113,27 @@ export default function BottomNav() {
             justifyContent: 'center',
           }}
         >
-          <PlusIcon size={20} color="#FFFFFF" weight="bold" />
+          <Plus size={20} color="#FFFFFF" strokeWidth={2.5} />
         </div>
         <span style={labelStyle(vendreActive, true)}>Vendre</span>
       </Link>
 
       {/* ── Favoris ── */}
       <Link href="/favoris" aria-label="Favoris" style={itemStyle()}>
-        <HeartIcon
+        <Heart
           size={ICON_SIZE}
           color={COULEUR_NAV}
-          weight={favorisActive ? 'fill' : 'light'}
+          fill={favorisActive ? COULEUR_NAV : 'none'}
         />
         <span style={labelStyle(favorisActive)}>Favoris</span>
       </Link>
 
       {/* ── Compte ── */}
       <Link href="/compte" aria-label="Compte" style={itemStyle()}>
-        <UserIcon
+        <User
           size={ICON_SIZE}
           color={COULEUR_NAV}
-          weight={compteActive ? 'fill' : 'light'}
+          fill={compteActive ? COULEUR_NAV : 'none'}
         />
         <span style={labelStyle(compteActive)}>Compte</span>
       </Link>

@@ -1,14 +1,14 @@
 'use client'
 
 import { ChevronRight } from 'lucide-react'
-import { CarIcon, HouseIcon, ArmchairIcon } from '@phosphor-icons/react/dist/ssr'
+import { Car, Home, Sofa } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ICON_MAP: Record<string, React.ComponentType<any>> = {
-  vehicule:   CarIcon,
-  immobilier: HouseIcon,
-  maison:     ArmchairIcon,
+  vehicule:   Car,
+  immobilier: Home,
+  maison:     Sofa,
 }
 
 interface Props {
@@ -36,7 +36,7 @@ export default function HomeCategoryHeader({ categorie, label }: Props) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {Icon && <Icon size={18} color="#404040" weight="fill" />}
+        {Icon && <Icon size={18} color="#404040" />}
         <span style={{ fontSize: 17, fontWeight: 700, color: '#1A1A1A' }}>
           {label}
         </span>

@@ -6,7 +6,7 @@ import { getListing, getProfile } from '@/lib/listings'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import { getCoordsVille } from '@/lib/cities'
 import AnnonceImageSection from '@/components/AnnonceImageSection'
-import AvisSection from '@/components/AvisSection'
+const AvisSection = dynamic(() => import('@/components/AvisSection'), { ssr: false })
 import type { Listing } from '@/lib/supabase'
 
 // Import dynamique pour éviter les erreurs SSR de Leaflet

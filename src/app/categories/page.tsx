@@ -3,26 +3,26 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronRight, ArrowLeft, Check, MapPin, Loader } from 'lucide-react'
-import { CarIcon, HouseIcon, ArmchairIcon } from '@phosphor-icons/react/dist/ssr'
+import { Car, Home, Sofa } from 'lucide-react'
 import CityInput from '@/components/CityInput'
 
 const CATEGORIES = [
   {
     id: 'vehicule',
     label: 'Véhicule',
-    Icon: CarIcon,
+    Icon: Car,
     sousCats: ['Voiture', 'Scooter', 'Moto', 'Bateau'],
   },
   {
     id: 'immobilier',
     label: 'Immobilier',
-    Icon: HouseIcon,
+    Icon: Home,
     sousCats: ['Location', 'Vente', 'Location Saisonnière', 'Commerce'],
   },
   {
     id: 'maison',
     label: 'Maison & Équipement',
-    Icon: ArmchairIcon,
+    Icon: Sofa,
     sousCats: ['Ameublement', 'Électroménager'],
   },
 ]
@@ -431,7 +431,7 @@ export default function CategoriesPage() {
         {CATEGORIES.map(({ id, label, Icon, sousCats }) => (
           <div key={id}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px 10px' }}>
-              <Icon size={18} color="#404040" weight="regular" />
+              <Icon size={18} color="#404040" />
               <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>{label}</span>
             </div>
             <div style={{ borderBottom: '1px solid #F0F0F0' }}>

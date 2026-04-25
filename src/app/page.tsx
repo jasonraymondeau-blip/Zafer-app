@@ -7,8 +7,9 @@ import HomeChips from '@/components/HomeChips'
 import HomePersonalized from '@/components/HomePersonalized'
 import HomeCategoryHeader from '@/components/HomeCategoryHeader'
 import type { Listing } from '@/lib/supabase'
+import { toThumbUrl } from '@/lib/r2-upload'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 // ── Sections par catégorie sur la page d'accueil ──────────────────────────
 const SECTIONS = [
@@ -45,8 +46,9 @@ function AnnonceCard({ listing }: { listing: Listing }) {
           {hasPhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={listing.photos[0]}
+              src={toThumbUrl(listing.photos[0])}
               alt={listing.titre}
+              loading="lazy"
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
             />
           ) : (

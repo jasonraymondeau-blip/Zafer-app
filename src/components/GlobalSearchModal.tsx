@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
-import { X, ChevronDown, ChevronRight } from 'lucide-react'
-import { CarIcon, HouseIcon, ArmchairIcon } from '@phosphor-icons/react/dist/ssr'
+import { X, ChevronDown, ChevronRight, Car, Home, Sofa } from 'lucide-react'
 import { useSearchModal } from '@/contexts/SearchModalContext'
 
 // Catégories centralisées — source unique de vérité pour le modal
@@ -12,19 +11,19 @@ const CATEGORIES = [
   {
     id: 'vehicule',
     label: 'Véhicule',
-    Icon: CarIcon,
+    Icon: Car,
     sousCats: ['Voiture', 'Scooter', 'Moto', 'Bateau'],
   },
   {
     id: 'immobilier',
     label: 'Immobilier',
-    Icon: HouseIcon,
+    Icon: Home,
     sousCats: ['Location', 'Vente', 'Location Saisonnière'],
   },
   {
     id: 'maison',
     label: 'Maison & Équipement',
-    Icon: ArmchairIcon,
+    Icon: Sofa,
     sousCats: ['Ameublement', 'Électroménager'],
   },
 ]
@@ -102,7 +101,7 @@ export default function GlobalSearchModal() {
                       className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
                       style={{ background: '#F4F4F4' }}
                     >
-                      <Icon size={18} color="#4E4E4E" weight="regular" />
+                      <Icon size={18} color="#4E4E4E" />
                     </div>
                     <span
                       className="flex-1 text-left text-sm"

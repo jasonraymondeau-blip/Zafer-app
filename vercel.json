@@ -1,0 +1,20 @@
+{
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    },
+    {
+      "source": "/(icon.*|logo.*|splash.*|manifest.json|version.json)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/_next/static/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/annonce/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, s-maxage=60, stale-while-revalidate=300" }]
+    }
+  ]
+}

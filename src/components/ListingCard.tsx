@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Listing } from '@/lib/supabase'
 import { formatPrix, formatDate } from '@/lib/mock-data'
+import { toThumbUrl } from '@/lib/r2-upload'
 import FavoriButton from './FavoriButton'
 
 interface ListingCardProps {
@@ -82,7 +83,7 @@ export default function ListingCard({ listing, className = '', compact = false }
           {hasPhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={listing.photos[0]}
+              src={toThumbUrl(listing.photos[0])}
               alt={listing.titre}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
             />

@@ -4,11 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, MapPin, Pencil } from 'lucide-react'
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  TrashSimpleIcon,
-} from '@phosphor-icons/react/dist/ssr'
+import { Eye, EyeOff, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase-browser'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import type { Listing } from '@/lib/supabase'
@@ -35,6 +31,7 @@ export default function MesAnnoncesPage() {
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
+        .limit(200)
 
       setAnnonces((listings as Listing[]) ?? [])
       setChargement(false)
@@ -75,18 +72,24 @@ export default function MesAnnoncesPage() {
 
     setEnCours((prev) => new Set(prev).add(annonce.id))
 
-    // Supprime les photos du Supabase Storage
+    // Supprime les photos (R2 pour les nouvelles, Supabase Storage pour les anciennes)
     if (annonce.photos && annonce.photos.length > 0) {
-      // Extrait le chemin relatif depuis l'URL publique (après /annonces-photos/)
-      const chemins = annonce.photos
-        .map((url) => {
-          const match = url.match(/annonces-photos\/(.+)$/)
-          return match ? match[1] : null
-        })
-        .filter(Boolean) as string[]
+      const photosR2 = annonce.photos.filter(u => u.includes('r2.dev') || u.includes('zafer.mu'))
+      const photosSupabase = annonce.photos.filter(u => u.includes('supabase.co'))
 
-      if (chemins.length > 0) {
-        await supabase.storage.from('annonces-photos').remove(chemins)
+      if (photosR2.length > 0) {
+        await fetch('/api/upload/delete', {
+          method: 'DELETE',
+          body: JSON.stringify({ urls: photosR2 }),
+          headers: { 'content-type': 'application/json' },
+        })
+      }
+
+      if (photosSupabase.length > 0) {
+        const chemins = photosSupabase
+          .map(url => { const m = url.match(/annonces-photos\/(.+)$/); return m ? m[1] : null })
+          .filter(Boolean) as string[]
+        if (chemins.length > 0) await supabase.storage.from('annonces-photos').remove(chemins)
       }
     }
 
@@ -208,8 +211,8 @@ export default function MesAnnoncesPage() {
                   className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-text-muted hover:text-text-main transition-colors disabled:opacity-40"
                 >
                   {annonce.actif
-                    ? <EyeSlashIcon size={14} weight="regular" />
-                    : <EyeIcon size={14} weight="regular" />
+                    ? <EyeOff className="w-3.5 h-3.5" />
+                    : <Eye className="w-3.5 h-3.5" />
                   }
                   {annonce.actif ? 'Masquer' : 'Activer'}
                 </button>
@@ -222,7 +225,7 @@ export default function MesAnnoncesPage() {
                   disabled={enCours.has(annonce.id)}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-red-400 hover:text-red-600 transition-colors disabled:opacity-40"
                 >
-                  <TrashSimpleIcon size={14} weight="regular" />
+                  <Trash2 className="w-3.5 h-3.5" />
                   Supprimer
                 </button>
 

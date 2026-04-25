@@ -37,6 +37,7 @@ export default function FavorisPage() {
       .select('listing_id, listings(*)')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
+      .limit(50)
 
     if (!error && data) {
       // Extrait les objets listing depuis le join

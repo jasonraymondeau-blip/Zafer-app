@@ -1,12 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { GridFourIcon, HouseIcon, CarIcon, ArmchairIcon } from '@phosphor-icons/react/dist/ssr'
+import { Grid2X2, Home, Car, Sofa } from 'lucide-react'
 
 const CATEGORIES = [
-  { label: 'Immobilier', categorie: 'immobilier', Icon: HouseIcon,    bg: '#E8F3EE', iconColor: '#2D7A57' },
-  { label: 'Véhicule',   categorie: 'vehicule',   Icon: CarIcon,      bg: '#FFF0E8', iconColor: '#C05C1A' },
-  { label: 'Maison',     categorie: 'maison',     Icon: ArmchairIcon, bg: '#F0EEFF', iconColor: '#5B3FD4' },
+  { label: 'Immobilier', categorie: 'immobilier', Icon: Home, bg: '#E8F3EE', iconColor: '#2D7A57' },
+  { label: 'Véhicule',   categorie: 'vehicule',   Icon: Car,  bg: '#FFF0E8', iconColor: '#C05C1A' },
+  { label: 'Maison',     categorie: 'maison',     Icon: Sofa, bg: '#F0EEFF', iconColor: '#5B3FD4' },
 ]
 
 const chipStyle = (bg: string) => ({
@@ -33,7 +33,7 @@ export default function HomeChips() {
       {/* Voir tout — navigue vers la page catégories (même que navbar Recherche) */}
       <Link href="/categories" style={chipStyle('#E8F0F3')}>
         <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <GridFourIcon size={14} color="#404040" weight="fill" />
+          <Grid2X2 size={14} color="#404040" />
         </div>
         <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1A1A' }}>Voir tout</span>
       </Link>
@@ -46,7 +46,7 @@ export default function HomeChips() {
           style={chipStyle(bg)}
         >
           <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={14} color={iconColor} weight="fill" />
+            <Icon size={14} color={iconColor} />
           </div>
           <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1A1A' }}>{label}</span>
         </Link>

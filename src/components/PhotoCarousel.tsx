@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface PhotoCarouselProps {
@@ -53,111 +54,111 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
 
   const emoji = categorie === 'vehicule' ? '🚗' : categorie === 'immobilier' ? '🏠' : '🛋️'
 
-  const carousel = (
-    <div
-      className="relative overflow-hidden select-none"
-      style={{ borderRadius: 0, background: '#1a1a1a', aspectRatio: '4/3' }}
-      onClick={handleClick}
-    >
-      {hasPhotos ? (
-        <>
-          {photos.map((photo, i) => {
-            const offset = (i - index) * 100
-            return (
-              <div
-                key={i}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  transform: isDragging
-                    ? `translateX(calc(${offset}% + ${dragX}px))`
-                    : `translateX(${offset}%)`,
-                  transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  willChange: 'transform',
-                }}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={photo}
-                  alt={i === 0 ? titre : ''}
-                  className="w-full h-full object-cover"
-                  draggable={false}
-                />
-              </div>
-            )
-          })}
-
-          {photos.length > 1 && (
-            <>
-              <button
-                onClick={(e) => { e.stopPropagation(); goTo(index - 1) }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 z-10"
-                style={{
-                  background: 'rgba(0,0,0,0.4)',
-                  opacity: index === 0 ? 0 : 1,
-                  pointerEvents: index === 0 ? 'none' : 'auto',
-                  transition: 'opacity 0.2s',
-                }}
-              >
-                <ChevronLeft className="w-5 h-5 text-white" />
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); goTo(index + 1) }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 z-10"
-                style={{
-                  background: 'rgba(0,0,0,0.4)',
-                  opacity: index === photos.length - 1 ? 0 : 1,
-                  pointerEvents: index === photos.length - 1 ? 'none' : 'auto',
-                  transition: 'opacity 0.2s',
-                }}
-              >
-                <ChevronRight className="w-5 h-5 text-white" />
-              </button>
-            </>
-          )}
-
-          {photos.length > 1 && (
-            <div className="absolute right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10" style={{ bottom: 28 }}>
-              {index + 1}/{photos.length}
-            </div>
-          )}
-
-          {photos.length > 1 && (
-            <div className="absolute left-1/2 -translate-x-1/2 flex gap-1.5 z-10" style={{ bottom: 28 }}>
-              {photos.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={(e) => { e.stopPropagation(); goTo(i) }}
-                  style={{
-                    width: 6, height: 6, borderRadius: '50%',
-                    background: i === index ? '#fff' : 'rgba(255,255,255,0.5)',
-                    transform: i === index ? 'scale(1.25)' : 'scale(1)',
-                    transition: 'all 0.2s',
-                  }}
-                />
-              ))}
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="w-full h-full flex items-center justify-center">
-          <span className="text-6xl">{emoji}</span>
-        </div>
-      )}
-    </div>
-  )
-
   return (
     <>
-      {carousel}
+      {/* Carousel normal */}
+      <div
+        className="relative overflow-hidden select-none"
+        style={{ borderRadius: 0, background: '#1a1a1a', aspectRatio: '4/3' }}
+        onClick={handleClick}
+      >
+        {hasPhotos ? (
+          <>
+            {photos.map((photo, i) => {
+              const offset = (i - index) * 100
+              return (
+                <div
+                  key={i}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    transform: isDragging
+                      ? `translateX(calc(${offset}% + ${dragX}px))`
+                      : `translateX(${offset}%)`,
+                    transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    willChange: 'transform',
+                  }}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photo}
+                    alt={i === 0 ? titre : ''}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
+                </div>
+              )
+            })}
 
-      {/* Lightbox plein écran */}
-      {lightboxOpen && (
-        <div className="fixed inset-0 z-[200] bg-black flex flex-col">
+            {photos.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); goTo(index - 1) }}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 z-10"
+                  style={{
+                    background: 'rgba(0,0,0,0.4)',
+                    opacity: index === 0 ? 0 : 1,
+                    pointerEvents: index === 0 ? 'none' : 'auto',
+                    transition: 'opacity 0.2s',
+                  }}
+                >
+                  <ChevronLeft className="w-5 h-5 text-white" />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); goTo(index + 1) }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 z-10"
+                  style={{
+                    background: 'rgba(0,0,0,0.4)',
+                    opacity: index === photos.length - 1 ? 0 : 1,
+                    pointerEvents: index === photos.length - 1 ? 'none' : 'auto',
+                    transition: 'opacity 0.2s',
+                  }}
+                >
+                  <ChevronRight className="w-5 h-5 text-white" />
+                </button>
+              </>
+            )}
 
+            {photos.length > 1 && (
+              <div className="absolute right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10" style={{ bottom: 28 }}>
+                {index + 1}/{photos.length}
+              </div>
+            )}
+
+            {photos.length > 1 && (
+              <div className="absolute left-1/2 -translate-x-1/2 flex gap-1.5 z-10" style={{ bottom: 28 }}>
+                {photos.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={(e) => { e.stopPropagation(); goTo(i) }}
+                    style={{
+                      width: 6, height: 6, borderRadius: '50%',
+                      background: i === index ? '#fff' : 'rgba(255,255,255,0.5)',
+                      transform: i === index ? 'scale(1.25)' : 'scale(1)',
+                      transition: 'all 0.2s',
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-6xl">{emoji}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Lightbox plein écran — rendu dans document.body via portal pour échapper aux stacking contexts */}
+      {lightboxOpen && createPortal(
+        <div
+          className="fixed inset-0 bg-black flex flex-col"
+          style={{ zIndex: 2000 }}
+          onClick={() => { if (!wasDragged.current) setLightboxOpen(false) }}
+        >
           {/* Header : flèche retour + titre + compteur */}
           <div
             className="flex-shrink-0 flex items-center justify-between px-4"
@@ -167,7 +168,7 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
             }}
           >
             <button
-              onClick={() => setLightboxOpen(false)}
+              onClick={(e) => { e.stopPropagation(); setLightboxOpen(false) }}
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, marginLeft: -4, display: 'flex', alignItems: 'center' }}
             >
               <ChevronLeft className="w-6 h-6 text-white" />
@@ -180,7 +181,7 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
             </span>
           </div>
 
-          {/* Zone photo swipeable */}
+          {/* Zone swipeable — flex-1 remplit tout l'espace entre header et safe area */}
           <div
             className="flex-1 relative overflow-hidden"
             onTouchStart={handleTouchStart}
@@ -210,15 +211,17 @@ export default function PhotoCarousel({ photos, titre, categorie }: PhotoCarouse
                     alt=""
                     style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                     draggable={false}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </div>
               )
             })}
           </div>
 
-          {/* Espace bas safe area */}
+          {/* Safe area bas */}
           <div style={{ height: 'env(safe-area-inset-bottom, 0px)', flexShrink: 0 }} />
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

@@ -1,13 +1,12 @@
 'use client'
 
 import { X } from 'lucide-react'
-import { CarIcon, HouseIcon, ArmchairIcon } from '@phosphor-icons/react'
 import { useSearchModal } from '@/contexts/SearchModalContext'
 
 const CATEGORIES = [
-  { value: 'vehicule',   label: 'Véhicule',   Icon: CarIcon      },
-  { value: 'immobilier', label: 'Immobilier',  Icon: HouseIcon    },
-  { value: 'maison',     label: 'Maison',      Icon: ArmchairIcon },
+  { value: 'vehicule',   label: 'Véhicule'   },
+  { value: 'immobilier', label: 'Immobilier'  },
+  { value: 'maison',     label: 'Maison'      },
 ]
 
 interface CategoryModalProps {

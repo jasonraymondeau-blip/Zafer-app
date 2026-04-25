@@ -52,6 +52,10 @@ function SplashScreen() {
 // Vérifie si une nouvelle version est dispo et recharge le PWA automatiquement
 function useAutoUpdate() {
   useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {})
+    }
+
     const KEY = 'zafer_version'
     fetch('/version.json?t=' + Date.now(), { cache: 'no-store' })
       .then(r => r.json())

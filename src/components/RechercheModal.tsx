@@ -8,6 +8,7 @@ import { useRechercheModal } from '@/contexts/RechercheModalContext'
 import { createClient } from '@/lib/supabase-browser'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import FavoriButton from './FavoriButton'
+import { toThumbUrl } from '@/lib/r2-upload'
 import type { Listing } from '@/lib/supabase'
 
 // Mini carte annonce pour la grille du modal
@@ -24,7 +25,7 @@ function MiniCard({ listing, onClose }: { listing: Listing; onClose: () => void 
           {hasPhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={listing.photos[0]}
+              src={toThumbUrl(listing.photos[0])}
               alt={listing.titre}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
             />
@@ -86,7 +87,7 @@ export default function RechercheModal() {
   // Debounce la recherche textuelle
   useEffect(() => {
     if (!isOpen) return
-    const timer = setTimeout(() => fetchAnnonces(q), 300)
+    const timer = setTimeout(() => fetchAnnonces(q), 400)
     return () => clearTimeout(timer)
   }, [q, isOpen, fetchAnnonces])
 

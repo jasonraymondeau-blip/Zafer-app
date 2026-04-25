@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Camera, X } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase-browser'
+import { uploadPhotoR2 } from '@/lib/r2-upload'
 import CityInput from '@/components/CityInput'
 
 const sousCategories: Record<string, string[]> = {
@@ -150,23 +151,8 @@ export default function VendrePage() {
         return
       }
 
-      // Upload des photos en parallèle dans Supabase Storage
-      const photoUrls = await Promise.all(photos.map(async (photo) => {
-        const ext = photo.name.split('.').pop()
-        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-
-        const { error: uploadError } = await supabase.storage
-          .from('annonces-photos')
-          .upload(path, photo, { upsert: false })
-
-        if (uploadError) throw uploadError
-
-        const { data: urlData } = supabase.storage
-          .from('annonces-photos')
-          .getPublicUrl(path)
-
-        return urlData.publicUrl
-      }))
+      // Upload des photos vers Cloudflare R2 (resize WebP auto)
+      const photoUrls = await Promise.all(photos.map(uploadPhotoR2))
 
       // Insertion de l'annonce
       const { error: insertError } = await supabase

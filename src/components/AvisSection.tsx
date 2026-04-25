@@ -80,7 +80,7 @@ export default function AvisSection({ vendeurId, listingId }: Props) {
   async function charger() {
     const [sessionRes, avisRes] = await Promise.all([
       supabase.auth.getSession(),
-      supabase.from('avis').select('*').eq('vendeur_id', vendeurId).order('created_at', { ascending: false }),
+      supabase.from('avis').select('*').eq('vendeur_id', vendeurId).order('created_at', { ascending: false }).limit(20),
     ])
 
     const uid = sessionRes.data.session?.user?.id ?? null
