@@ -56,7 +56,7 @@ export default function MapAnnonce({ lat, lng, titre }: MapAnnonceProps) {
 
   return (
     <div className="mt-4">
-      <h2 className="font-semibold text-text-main text-sm mb-2">Localisation</h2>
+      <h2 className="font-semibold text-text-main text-base mb-2">Localisation</h2>
       <div className="relative rounded-[12px] overflow-hidden" style={{ height: 200 }}>
         <MapContainer
           center={[lat, lng]}

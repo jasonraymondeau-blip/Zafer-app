@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import { MapPin, Calendar, Ruler, Home, Tag, BedDouble, Sofa, Gauge, Settings2, Fuel, Car, Package, Wrench } from 'lucide-react'
+import Link from 'next/link'
+import { MapPin, Calendar, Ruler, Home, Tag, BedDouble, Sofa, Gauge, Settings2, Fuel, Car, Package, Wrench, ChevronRight } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { getListing, getProfile } from '@/lib/listings'
 import { formatPrix, formatDate } from '@/lib/mock-data'
@@ -136,7 +137,7 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
         {/* Description */}
         {annonce.description && (
           <div className="mt-4">
-            <h2 className="font-semibold text-text-main text-sm mb-2">Description</h2>
+            <h2 className="font-semibold text-text-main text-base mb-2">Description</h2>
             <p className="text-text-main text-base leading-relaxed">{annonce.description}</p>
           </div>
         )}
@@ -149,22 +150,25 @@ export default async function AnnoncePage({ params }: AnnoncePageProps) {
           return <MapAnnonce lat={lat} lng={lng} titre={annonce.titre} />
         })()}
 
-        {/* Section vendeur */}
-        <div className="mt-4 bg-card rounded-[6px] p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-            <span className="text-primary font-bold text-sm">
-              {vendeur?.prenom?.[0]?.toUpperCase() ?? 'V'}
-            </span>
+        {/* Section vendeur — cliquable → page profil */}
+        <Link href={`/vendeur/${annonce.user_id}`} className="block mt-4">
+          <div className="bg-card rounded-[6px] p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+              <span className="text-primary font-bold text-sm">
+                {vendeur?.prenom?.[0]?.toUpperCase() ?? 'V'}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-text-main text-sm">
+                {[vendeur?.prenom, vendeur?.nom].filter(Boolean).join(' ') || 'Vendeur'}
+              </p>
+              <p className="text-text-muted text-xs">
+                {membreSince ? `Membre depuis ${membreSince}` : 'Membre Zafer'}
+              </p>
+            </div>
+            <ChevronRight className="w-4 h-4 flex-shrink-0" style={{ color: '#BBBBBB' }} />
           </div>
-          <div>
-            <p className="font-semibold text-text-main text-sm">
-              {vendeur?.prenom ?? 'Vendeur'}
-            </p>
-            <p className="text-text-muted text-xs">
-              {membreSince ? `Membre depuis ${membreSince}` : 'Membre Zafer'}
-            </p>
-          </div>
-        </div>
+        </Link>
 
         {/* Avis acheteurs */}
         <AvisSection vendeurId={annonce.user_id} listingId={annonce.id} />
