@@ -1,5 +1,7 @@
 'use client'
 
+export { toThumbUrl } from '@/lib/url-utils'
+
 async function resizeWebP(file: File, maxPx: number, quality: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image()
@@ -40,10 +42,3 @@ export async function uploadPhotoR2(file: File): Promise<string> {
   return publicUrl
 }
 
-export function toThumbUrl(url: string): string {
-  if (!url) return url
-  if (url.includes('r2.dev') || url.includes('zafer.mu')) {
-    return url.replace('.webp', '_t.webp')
-  }
-  return url
-}

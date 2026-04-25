@@ -7,7 +7,7 @@ import HomeChips from '@/components/HomeChips'
 import HomePersonalized from '@/components/HomePersonalized'
 import HomeCategoryHeader from '@/components/HomeCategoryHeader'
 import type { Listing } from '@/lib/supabase'
-import { toThumbUrl } from '@/lib/r2-upload'
+import { toThumbUrl } from '@/lib/url-utils'
 
 export const dynamic = 'force-dynamic'
 
