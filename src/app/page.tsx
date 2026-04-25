@@ -9,7 +9,7 @@ import HomeCategoryHeader from '@/components/HomeCategoryHeader'
 import type { Listing } from '@/lib/supabase'
 import { toThumbUrl } from '@/lib/r2-upload'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 // ── Sections par catégorie sur la page d'accueil ──────────────────────────
 const SECTIONS = [
