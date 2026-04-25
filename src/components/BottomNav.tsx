@@ -38,8 +38,13 @@ export default function BottomNav() {
   // Masquer sur les pages détail annonce, recherche, catégories et quand un modal est ouvert
   if (isOpen || isRechercheOpen || pathname.startsWith('/annonce/') || pathname.startsWith('/recherche') || pathname.startsWith('/categories') || pathname.includes('/modifier')) return null
 
-  // Sur /compte, masquer si non connecté (affiche le formulaire de connexion)
-  if (pathname === '/compte' && connecte !== true) return null
+  // Masquer sur les pages protégées quand non connecté (formulaire de connexion occupe tout l'écran)
+  const surPageProtegee = pathname === '/compte' || pathname === '/favoris' || pathname === '/vendre'
+  if (surPageProtegee && connecte !== true) return null
+
+  // Liens protégés : redirige directement vers /compte si non connecté
+  const hrefFavoris = connecte === false ? '/compte?redirect=/favoris' : '/favoris'
+  const hrefVendre  = connecte === false ? '/compte?redirect=/vendre'  : '/vendre'
 
   // Actif selon la route
   const rechercheActive = pathname.startsWith('/categories') || pathname.startsWith('/recherche')
@@ -93,7 +98,7 @@ export default function BottomNav() {
 
       {/* ── Vendre — bouton qui dépasse de la navbar ── */}
       <Link
-        href="/vendre"
+        href={hrefVendre}
         aria-label="Vendre"
         style={{ ...itemStyle(), position: 'relative', justifyContent: 'flex-end' }}
       >
@@ -119,7 +124,7 @@ export default function BottomNav() {
       </Link>
 
       {/* ── Favoris ── */}
-      <Link href="/favoris" aria-label="Favoris" style={itemStyle()}>
+      <Link href={hrefFavoris} aria-label="Favoris" style={itemStyle()}>
         <Heart
           size={ICON_SIZE}
           color={COULEUR_NAV}
