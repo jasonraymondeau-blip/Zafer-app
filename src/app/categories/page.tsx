@@ -398,7 +398,7 @@ export default function CategoriesPage() {
             width: '100%',
             padding: '15px 24px',
             borderRadius: 14,
-            background: '#1A1A1A',
+            background: '#b85c38',
             color: '#FFFFFF',
             fontSize: 15,
             fontWeight: 700,

@@ -577,7 +577,7 @@ export default function VendrePage() {
 
         {/* Bouton publier */}
         <button type="submit" disabled={loading || !categorie || !sousCategorie || !titre || !prix || !ville}
-          className="w-full bg-primary hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-[6px] transition-colors text-sm mt-2">
+          style={{ width:'100%', background:'#b85c38', color:'#FFFFFF', fontWeight:600, padding:'16px 0', borderRadius:6, border:'none', fontSize:14, cursor:'pointer', opacity: (loading || !categorie || !sousCategorie || !titre || !prix || !ville) ? 0.5 : 1 }}>
           {loading ? 'Publication en cours...' : "Publier l'annonce"}
         </button>
       </form>

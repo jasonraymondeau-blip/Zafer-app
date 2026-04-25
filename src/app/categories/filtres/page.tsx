@@ -335,7 +335,7 @@ export default function FiltresPage() {
       <div style={{ position: 'fixed', bottom: 24, left: 0, right: 0, display: 'flex', justifyContent: 'center', padding: '0 16px', zIndex: 10 }}>
         <button
           onClick={handleValider}
-          style={{ width: '100%', maxWidth: 448, padding: '15px 24px', borderRadius: 14, background: '#1A1A1A', color: '#FFFFFF', fontSize: 15, fontWeight: 700, border: 'none', cursor: 'pointer' }}
+          style={{ width: '100%', maxWidth: 448, padding: '15px 24px', borderRadius: 14, background: '#b85c38', color: '#FFFFFF', fontSize: 15, fontWeight: 700, border: 'none', cursor: 'pointer' }}
         >
           Voir les annonces
         </button>
