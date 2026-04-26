@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronRight, ArrowLeft, Check, MapPin, Loader } from 'lucide-react'
-import { Car, Home, Sofa } from 'lucide-react'
+import { CarFront, Home, Sofa } from 'lucide-react'
 import CityInput from '@/components/CityInput'
 
 const CATEGORIES = [
   {
     id: 'vehicule',
     label: 'Véhicule',
-    Icon: Car,
+    Icon: CarFront,
     sousCats: ['Voiture', 'Scooter', 'Moto', 'Bateau'],
   },
   {

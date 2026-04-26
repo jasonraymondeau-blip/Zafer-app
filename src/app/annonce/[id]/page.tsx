@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { MapPin, Calendar, Ruler, Home, Tag, BedDouble, Sofa, Gauge, Settings2, Fuel, Car, Package, Wrench, ChevronRight } from 'lucide-react'
+import { MapPin, Calendar, Ruler, Home, Tag, BedDouble, Sofa, Gauge, Settings2, Fuel, CarFront, Package, Wrench, ChevronRight } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { getListing, getProfile } from '@/lib/listings'
 import { formatPrix, formatDate } from '@/lib/mock-data'
@@ -32,7 +32,7 @@ function getInfosCles(annonce: Listing): Array<{ label: string; valeur: string; 
     if (annonce.kilometrage) infos.push({ label: 'Kilométrage', valeur: `${annonce.kilometrage.toLocaleString()} km`, Icon: Gauge })
     if (annonce.boite_vitesse) infos.push({ label: 'Boîte', valeur: cap(annonce.boite_vitesse), Icon: Settings2 })
     if (annonce.carburant) infos.push({ label: 'Carburant', valeur: cap(annonce.carburant), Icon: Fuel })
-    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie, Icon: Car })
+    infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie, Icon: CarFront })
   } else if (annonce.categorie === 'maison') {
     if (annonce.etat) infos.push({ label: 'État', valeur: cap(annonce.etat), Icon: Wrench })
     infos.push({ label: 'Catégorie', valeur: annonce.sous_categorie, Icon: Package })

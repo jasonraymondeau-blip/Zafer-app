@@ -1,11 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { Grid2X2, Home, Car, Sofa } from 'lucide-react'
+import { Grid2X2, Home, CarFront, Sofa } from 'lucide-react'
 
 const CATEGORIES = [
-  { label: 'Immobilier', categorie: 'immobilier', Icon: Home, bg: '#E8F3EE', iconColor: '#2D7A57' },
-  { label: 'Véhicule',   categorie: 'vehicule',   Icon: Car,  bg: '#FFF0E8', iconColor: '#C05C1A' },
+  { label: 'Immobilier', categorie: 'immobilier', Icon: Home,     bg: '#E8F3EE', iconColor: '#2D7A57' },
+  { label: 'Véhicule',   categorie: 'vehicule',   Icon: CarFront, bg: '#FFF0E8', iconColor: '#C05C1A' },
   { label: 'Maison',     categorie: 'maison',     Icon: Sofa, bg: '#F0EEFF', iconColor: '#5B3FD4' },
 ]
 

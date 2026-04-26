@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
-import { X, ChevronDown, ChevronRight, Car, Home, Sofa } from 'lucide-react'
+import { X, ChevronDown, ChevronRight, CarFront, Home, Sofa } from 'lucide-react'
 import { useSearchModal } from '@/contexts/SearchModalContext'
 
 // Catégories centralisées — source unique de vérité pour le modal
@@ -11,7 +11,7 @@ const CATEGORIES = [
   {
     id: 'vehicule',
     label: 'Véhicule',
-    Icon: Car,
+    Icon: CarFront,
     sousCats: ['Voiture', 'Scooter', 'Moto', 'Bateau'],
   },
   {

@@ -1,12 +1,12 @@
 'use client'
 
 import { ChevronRight } from 'lucide-react'
-import { Car, Home, Sofa } from 'lucide-react'
+import { CarFront, Home, Sofa } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ICON_MAP: Record<string, React.ComponentType<any>> = {
-  vehicule:   Car,
+  vehicule:   CarFront,
   immobilier: Home,
   maison:     Sofa,
 }
