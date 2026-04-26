@@ -5,6 +5,7 @@ import { Listing } from '@/lib/supabase'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import { toThumbUrl } from '@/lib/r2-upload'
 import FavoriButton from './FavoriButton'
+import MiniConfianceVendeur from './MiniConfianceVendeur'
 
 interface ListingCardProps {
   listing: Listing
@@ -102,9 +103,12 @@ export default function ListingCard({ listing, className = '', compact = false }
           <p className="truncate" style={{ fontSize: compact ? 15 : 16, fontWeight: 600, color: '#1A1A1A' }}>
             {listing.titre}
           </p>
-          <p style={{ fontSize: compact ? 15 : 16, fontWeight: 700, color: '#1A1A1A', marginTop: 2 }}>
-            {formatPrix(listing.prix)}
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 2 }}>
+            <p style={{ fontSize: compact ? 15 : 16, fontWeight: 700, color: '#1A1A1A' }}>
+              {formatPrix(listing.prix)}
+            </p>
+            <MiniConfianceVendeur userId={listing.user_id} />
+          </div>
           {/* Détails spécifiques à la catégorie — toujours affichés */}
           <DetailsCategorie listing={listing} compact={compact} />
           <p style={{ fontSize: 11, color: '#888888', marginTop: 2 }}>
