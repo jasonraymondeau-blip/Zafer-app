@@ -1,13 +1,10 @@
-import Link from 'next/link'
 import { getListings } from '@/lib/listings'
-import { formatPrix, formatDate } from '@/lib/mock-data'
-import FavoriButton from '@/components/FavoriButton'
 import Greeting from '@/components/Greeting'
 import HomeChips from '@/components/HomeChips'
 import HomePersonalized from '@/components/HomePersonalized'
 import HomeCategoryHeader from '@/components/HomeCategoryHeader'
+import ListingCard from '@/components/ListingCard'
 import type { Listing } from '@/lib/supabase'
-import { toThumbUrl } from '@/lib/url-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,67 +14,6 @@ const SECTIONS = [
   { categorie: 'immobilier' as const, label: 'Immobilier'          },
   { categorie: 'maison'     as const, label: 'Maison & Équipement' },
 ]
-
-// ── Placeholder coloré quand l'annonce n'a pas de photo ──────────────────
-function PhotoPlaceholder({ categorie }: { categorie: string }) {
-  const map: Record<string, { bg: string; emoji: string }> = {
-    vehicule:   { bg: '#EBF3FF', emoji: '🚗' },
-    immobilier: { bg: '#E8F5E9', emoji: '🏠' },
-    maison:     { bg: '#FFF3E0', emoji: '🛋️' },
-  }
-  const { bg, emoji } = map[categorie] ?? { bg: '#F5F5F5', emoji: '📦' }
-  return (
-    <div style={{ background: bg, position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <span className="text-4xl">{emoji}</span>
-    </div>
-  )
-}
-
-// ── Card annonce — image 4/5, tag catégorie + cœur sur image ─────────────
-function AnnonceCard({ listing }: { listing: Listing }) {
-  const hasPhoto = listing.photos && listing.photos.length > 0
-
-  return (
-    <Link href={`/annonce/${listing.id}`} className="block">
-      <div style={{ background: '#FFFFFF', borderRadius: 4 }}>
-
-        {/* Conteneur aspect-ratio 4/5 — l'image remplit le conteneur en absolute */}
-        <div className="relative w-full" style={{ borderRadius: 4, overflow: 'hidden', background: '#F5F5F5', aspectRatio: '4/5' }}>
-          {hasPhoto ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={toThumbUrl(listing.photos[0])}
-              alt={listing.titre}
-              loading="lazy"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          ) : (
-            <PhotoPlaceholder categorie={listing.categorie} />
-          )}
-
-          {/* Bouton cœur — bas droite */}
-          <div className="absolute bottom-2 right-2">
-            <FavoriButton listingId={listing.id} size="sm" />
-          </div>
-        </div>
-
-        {/* Texte sous l'image */}
-        <div style={{ padding: '9px 10px 11px' }}>
-          <p className="truncate" style={{ fontSize: 13, fontWeight: 500, color: '#1A1A1A' }}>
-            {listing.titre}
-          </p>
-          <p style={{ fontSize: 15, fontWeight: 500, color: '#404040', marginTop: 2 }}>
-            {formatPrix(listing.prix)}
-          </p>
-          <p style={{ fontSize: 11, color: '#888888', marginTop: 2 }}>
-            {listing.ville || 'Maurice'} · {formatDate(listing.created_at)}
-          </p>
-        </div>
-
-      </div>
-    </Link>
-  )
-}
 
 // ── Grille 2 colonnes ─────────────────────────────────────────────────────
 function GrilleAnnonces({ annonces, max = 4 }: { annonces: Listing[]; max?: number }) {
@@ -92,7 +28,7 @@ function GrilleAnnonces({ annonces, max = 4 }: { annonces: Listing[]; max?: numb
       }}
     >
       {annonces.slice(0, max).map((listing) => (
-        <AnnonceCard key={listing.id} listing={listing} />
+        <ListingCard key={listing.id} listing={listing} compact />
       ))}
     </div>
   )
