@@ -14,7 +14,7 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 const INNER_DIAM = (RADIUS - STROKE_WIDTH / 2 - 1) * 2
 const INNER_OFFSET = CENTER - INNER_DIAM / 2
 
-export default function MiniConfianceVendeur({ userId }: { userId: string }) {
+export default function MiniConfianceVendeur({ userId, onScore }: { userId: string; onScore?: (s: number) => void }) {
   const supabase = createClient()
   const [score, setScore] = useState<number | null>(null)
 
@@ -32,7 +32,9 @@ export default function MiniConfianceVendeur({ userId }: { userId: string }) {
         (listingsRes.count ?? 0) > 0,
         !avisRes.error && (avisRes.count ?? 0) > 0,
       ]
-      setScore(liste.filter(Boolean).length * POINTS_PAR_CRITERE + 20)
+      const s = liste.filter(Boolean).length * POINTS_PAR_CRITERE + 20
+      setScore(s)
+      onScore?.(s)
     }
     charger()
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,6 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
+import { ShieldCheck } from 'lucide-react'
 import { Listing } from '@/lib/supabase'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import { toThumbUrl } from '@/lib/r2-upload'
@@ -73,6 +75,7 @@ function DetailsCategorie({ listing, compact = false }: { listing: Listing; comp
 // - compact (2 colonnes) : ratio 4/5 portrait, texte plus petit
 export default function ListingCard({ listing, className = '', compact = false }: ListingCardProps) {
   const hasPhoto = listing.photos && listing.photos.length > 0
+  const [superVendeur, setSuperVendeur] = useState(false)
 
   return (
     <Link href={`/annonce/${listing.id}`} className={`block ${className}`}>
@@ -90,6 +93,26 @@ export default function ListingCard({ listing, className = '', compact = false }
             />
           ) : (
             <CategoryPlaceholder categorie={listing.categorie} />
+          )}
+
+          {/* Badge SuperVendeur — haut gauche */}
+          {superVendeur && (
+            <div className="absolute top-2 left-2">
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 3,
+                background: 'rgba(255,255,255,0.93)',
+                borderRadius: 20,
+                padding: '3px 7px 3px 5px',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+              }}>
+                <ShieldCheck size={11} color="#d58F62" strokeWidth={2.5} />
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#d58F62', letterSpacing: 0.2 }}>
+                  SuperVendeur
+                </span>
+              </div>
+            </div>
           )}
 
           {/* Bouton cœur — bas droite */}
@@ -111,7 +134,7 @@ export default function ListingCard({ listing, className = '', compact = false }
               </p>
             </div>
             {/* Badge indice de confiance à droite */}
-            <MiniConfianceVendeur userId={listing.user_id} />
+            <MiniConfianceVendeur userId={listing.user_id} onScore={(s) => setSuperVendeur(s === 100)} />
           </div>
           {/* Détails spécifiques à la catégorie — toujours affichés */}
           <DetailsCategorie listing={listing} compact={compact} />
