@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { ShieldCheck } from 'lucide-react'
 import { Listing } from '@/lib/supabase'
 import { formatPrix, formatDate } from '@/lib/mock-data'
@@ -76,6 +77,7 @@ function DetailsCategorie({ listing, compact = false }: { listing: Listing; comp
 export default function ListingCard({ listing, className = '', compact = false }: ListingCardProps) {
   const hasPhoto = listing.photos && listing.photos.length > 0
   const [superVendeur, setSuperVendeur] = useState(false)
+  const router = useRouter()
 
   return (
     <Link href={`/annonce/${listing.id}`} className={`block ${className}`}>
@@ -126,15 +128,20 @@ export default function ListingCard({ listing, className = '', compact = false }
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
             {/* Titre + prix à gauche */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: compact ? 13 : 14, fontWeight: 600, color: '#1A1A1A', lineHeight: 1.3, wordBreak: 'break-word' }}>
+              <p className="truncate" style={{ fontSize: compact ? 11 : 12, fontWeight: 600, color: '#1A1A1A', lineHeight: 1.3 }}>
                 {listing.titre}
               </p>
-              <p style={{ fontSize: compact ? 14 : 15, fontWeight: 700, color: '#1A1A1A', marginTop: 2 }}>
+              <p className="truncate" style={{ fontSize: compact ? 12 : 13, fontWeight: 700, color: '#1A1A1A', marginTop: 1 }}>
                 {formatPrix(listing.prix)}
               </p>
             </div>
-            {/* Badge indice de confiance à droite */}
-            <MiniConfianceVendeur userId={listing.user_id} onScore={(s) => setSuperVendeur(s === 100)} />
+            {/* Badge indice de confiance — cliquable vers profil vendeur */}
+            <div
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/vendeur/${listing.user_id}`) }}
+              style={{ cursor: 'pointer', flexShrink: 0 }}
+            >
+              <MiniConfianceVendeur userId={listing.user_id} onScore={(s) => setSuperVendeur(s === 100)} />
+            </div>
           </div>
           {/* Détails spécifiques à la catégorie — toujours affichés */}
           <DetailsCategorie listing={listing} compact={compact} />

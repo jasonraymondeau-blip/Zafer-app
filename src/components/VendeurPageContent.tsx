@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ArrowLeft, CheckCircle2, Circle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Profile, Listing } from '@/lib/supabase'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import { toThumbUrl } from '@/lib/r2-upload'
+import { createClient } from '@/lib/supabase-browser'
 import AvatarConfianceVendeur from './AvatarConfianceVendeur'
 
 interface Avis {
@@ -44,6 +45,22 @@ export default function VendeurPageContent({
 }) {
   const router = useRouter()
   const [onglet, setOnglet] = useState<'annonces' | 'avis'>('annonces')
+  const [avisDonnes, setAvisDonnes] = useState(0)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.from('avis').select('id', { count: 'exact', head: true })
+      .eq('acheteur_id', profil.id)
+      .then(({ count }) => setAvisDonnes(count ?? 0))
+  }, [profil.id])
+
+  const criteres = [
+    { label: 'Compte créé',           valide: true,                              pts: 20 },
+    { label: 'Nom et prénom',          valide: !!(profil.prenom && profil.nom),   pts: 20 },
+    { label: 'Numéro de téléphone',    valide: !!profil.telephone,                pts: 20 },
+    { label: 'Annonce publiée',        valide: listings.length > 0,               pts: 20 },
+    { label: 'Avis laissé (acheteur)', valide: avisDonnes > 0,                    pts: 20 },
+  ]
 
   const moyenne = avis.length > 0
     ? Math.round((avis.reduce((s, a) => s + a.note, 0) / avis.length) * 10) / 10
@@ -107,6 +124,27 @@ export default function VendeurPageContent({
             Membre depuis {anneeMembre}
           </p>
         )}
+      </div>
+
+      {/* Détail du score de confiance */}
+      <div style={{ margin: '0 16px 20px', background: '#FAFAFA', borderRadius: 12, border: '1px solid #F0F0F0', padding: '14px 16px' }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', marginBottom: 10 }}>
+          Indice de confiance
+        </p>
+        {criteres.map((c) => (
+          <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+            {c.valide
+              ? <CheckCircle2 size={16} color="#22C55E" strokeWidth={2} />
+              : <Circle size={16} color="#D1D5DB" strokeWidth={2} />
+            }
+            <span style={{ flex: 1, fontSize: 13, color: c.valide ? '#1A1A1A' : '#AAAAAA' }}>
+              {c.label}
+            </span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: c.valide ? '#d58F62' : '#DDDDDD' }}>
+              +{c.pts}
+            </span>
+          </div>
+        ))}
       </div>
 
       {/* Tabs */}
