@@ -35,8 +35,8 @@ export default function BottomNav() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Masquer sur les pages détail annonce, recherche, catégories et quand un modal est ouvert
-  if (isOpen || isRechercheOpen || pathname.startsWith('/annonce/') || pathname.startsWith('/recherche') || pathname.startsWith('/categories') || pathname.includes('/modifier')) return null
+  // Masquer uniquement sur la page détail annonce et quand un modal est ouvert
+  if (isOpen || isRechercheOpen || pathname.startsWith('/annonce/')) return null
 
   // Masquer sur les pages protégées quand non connecté (formulaire de connexion occupe tout l'écran)
   const surPageProtegee = pathname === '/compte' || pathname === '/favoris' || pathname === '/vendre'
