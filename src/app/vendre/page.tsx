@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Camera, X } from 'lucide-react'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase-browser'
 import { uploadPhotoR2 } from '@/lib/r2-upload'
 import CityInput from '@/components/CityInput'
@@ -52,6 +51,7 @@ export default function VendrePage() {
   const [erreur, setErreur] = useState('')
   const [avertissementIA, setAvertissementIA] = useState('')
   const [authCheck, setAuthCheck] = useState(true)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   // Redirige immédiatement vers /compte si non connecté
   useEffect(() => {
@@ -63,6 +63,17 @@ export default function VendrePage() {
       }
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Intercepte le geste "retour" du navigateur pour afficher la confirmation
+  useEffect(() => {
+    window.history.pushState(null, '', window.location.href)
+    const handler = () => {
+      window.history.pushState(null, '', window.location.href)
+      setShowConfirm(true)
+    }
+    window.addEventListener('popstate', handler)
+    return () => window.removeEventListener('popstate', handler)
   }, [])
 
   // Recadre au centre en 4:5, redimensionne à max 1200px de large, convertit en WebP
@@ -231,7 +242,9 @@ export default function VendrePage() {
   return (
     <div className="max-w-lg mx-auto" style={{ paddingBottom: 96 }}>
       <header className="sticky top-0 bg-white z-40 px-4 pb-3 border-b border-gray-100 flex items-center gap-3" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 16px)' }}>
-        <Link href="/"><ArrowLeft className="w-5 h-5 text-text-main" /></Link>
+        <button type="button" onClick={() => setShowConfirm(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+          <ArrowLeft className="w-5 h-5 text-text-main" />
+        </button>
         <h1 className="font-bold text-lg text-text-main">Déposer une annonce</h1>
       </header>
 
@@ -581,6 +594,45 @@ export default function VendrePage() {
           {loading ? 'Publication en cours...' : "Publier l'annonce"}
         </button>
       </form>
+
+      {/* Dialog de confirmation quitter */}
+      {showConfirm && (
+        <>
+          <div
+            onClick={() => setShowConfirm(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 200 }}
+          />
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            background: '#FFFFFF', borderRadius: 16,
+            padding: '28px 24px 20px',
+            width: 'calc(100% - 48px)', maxWidth: 340,
+            zIndex: 201, textAlign: 'center',
+          }}>
+            <p style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', marginBottom: 8 }}>
+              Êtes-vous sûr ?
+            </p>
+            <p style={{ fontSize: 14, color: '#888888', marginBottom: 24, lineHeight: 1.5 }}>
+              Voulez-vous vraiment supprimer votre annonce ?
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <button
+                onClick={() => setShowConfirm(false)}
+                style={{ width: '100%', background: '#1A1A1A', color: '#FFFFFF', border: 'none', borderRadius: 10, padding: '14px 0', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+              >
+                Rester sur l&apos;annonce
+              </button>
+              <button
+                onClick={() => router.push('/')}
+                style={{ width: '100%', background: 'none', color: '#888888', border: '1px solid #E5E5E5', borderRadius: 10, padding: '14px 0', fontSize: 14, fontWeight: 500, cursor: 'pointer' }}
+              >
+                Quitter l&apos;annonce
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -37,8 +37,8 @@ export default function BottomNav() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Masquer uniquement sur la page détail annonce et quand un modal est ouvert
-  if (isOpen || isRechercheOpen || pathname.startsWith('/annonce/')) return null
+  // Masquer sur la page détail annonce, la page vendre, et quand un modal est ouvert
+  if (isOpen || isRechercheOpen || pathname.startsWith('/annonce/') || pathname === '/vendre') return null
 
   // Intercepte les clics sur pages protégées si non connecté → ouvre le modal de connexion
   const protect = (e: React.MouseEvent, dest: string) => {
