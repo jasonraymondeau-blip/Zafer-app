@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, ShieldCheck } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Profile, Listing } from '@/lib/supabase'
 import { formatPrix, formatDate } from '@/lib/mock-data'
 import { toThumbUrl } from '@/lib/r2-upload'
+import AvatarConfianceVendeur from './AvatarConfianceVendeur'
 
 interface Avis {
   id: string
@@ -50,7 +51,6 @@ export default function VendeurPageContent({
 
   const anneeMembre = profil.created_at ? new Date(profil.created_at).getFullYear() : null
   const nomComplet = [profil.prenom, profil.nom].filter(Boolean).join(' ')
-  const estVerifie = !!(profil.prenom && profil.telephone)
 
   return (
     <div className="max-w-lg mx-auto bg-white min-h-screen">
@@ -82,39 +82,8 @@ export default function VendeurPageContent({
       {/* Carte profil */}
       <div style={{ padding: '28px 20px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
 
-        {/* Avatar */}
-        {profil.avatar_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={profil.avatar_url}
-            alt={nomComplet}
-            style={{ width: 88, height: 88, borderRadius: '50%', objectFit: 'cover', border: '3px solid #F0F0F0' }}
-          />
-        ) : (
-          <div style={{
-            width: 88, height: 88, borderRadius: '50%',
-            background: '#496977',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            <span style={{ fontSize: 36, fontWeight: 700, color: '#FFFFFF' }}>
-              {profil.prenom?.[0]?.toUpperCase() ?? 'V'}
-            </span>
-          </div>
-        )}
-
-        {/* Badge témoin de confiance */}
-        {estVerifie && (
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 5,
-            background: '#EDFBF2', borderRadius: 20,
-            padding: '5px 14px',
-            marginTop: 2,
-          }}>
-            <ShieldCheck style={{ width: 14, height: 14, color: '#2D8A4E' }} />
-            <span style={{ fontSize: 12, fontWeight: 600, color: '#2D8A4E' }}>Témoin de confiance</span>
-          </div>
-        )}
+        {/* Avatar avec anneau indice de confiance */}
+        <AvatarConfianceVendeur profil={profil} />
 
         {/* Nom */}
         <p style={{ fontSize: 22, fontWeight: 700, color: '#1A1A1A', margin: 0, textAlign: 'center' }}>
