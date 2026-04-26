@@ -25,7 +25,7 @@ function SplashScreen() {
       }}
     >
       <img
-        src="/logo-titre.svg"
+        src="/logo-splash.png"
         alt="Zafer"
         style={{ width: 460, height: 230, marginBottom: 24, objectFit: 'contain' }}
       />
