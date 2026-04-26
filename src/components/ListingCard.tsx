@@ -117,31 +117,27 @@ export default function ListingCard({ listing, className = '', compact = false }
             </div>
           )}
 
-          {/* Bouton cœur — bas droite */}
-          <div className="absolute bottom-2 right-2">
+          {/* Bas droite — badge confiance + cœur */}
+          <div className="absolute bottom-2 right-2 flex items-center gap-1">
+            <div
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/vendeur/${listing.user_id}`) }}
+              style={{ cursor: 'pointer' }}
+            >
+              <MiniConfianceVendeur userId={listing.user_id} onScore={(s) => setSuperVendeur(s === 100)} />
+            </div>
             <FavoriButton listingId={listing.id} size="sm" />
           </div>
         </div>
 
         {/* Texte sous l'image */}
         <div style={{ padding: compact ? '8px 4px 6px' : '9px 2px 6px' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
-            {/* Titre + prix à gauche */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p className="truncate" style={{ fontSize: compact ? 11 : 12, fontWeight: 600, color: '#1A1A1A', lineHeight: 1.3 }}>
-                {listing.titre}
-              </p>
-              <p className="truncate" style={{ fontSize: compact ? 12 : 13, fontWeight: 700, color: '#1A1A1A', marginTop: 1 }}>
-                {formatPrix(listing.prix)}
-              </p>
-            </div>
-            {/* Badge indice de confiance — cliquable vers profil vendeur */}
-            <div
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/vendeur/${listing.user_id}`) }}
-              style={{ cursor: 'pointer', flexShrink: 0 }}
-            >
-              <MiniConfianceVendeur userId={listing.user_id} onScore={(s) => setSuperVendeur(s === 100)} />
-            </div>
+          <div>
+            <p className="truncate" style={{ fontSize: compact ? 13 : 14, fontWeight: 600, color: '#1A1A1A', lineHeight: 1.3 }}>
+              {listing.titre}
+            </p>
+            <p className="truncate" style={{ fontSize: compact ? 14 : 15, fontWeight: 700, color: '#1A1A1A', marginTop: 1 }}>
+              {formatPrix(listing.prix)}
+            </p>
           </div>
           {/* Détails spécifiques à la catégorie — toujours affichés */}
           <DetailsCategorie listing={listing} compact={compact} />
