@@ -6,10 +6,13 @@ import { createClient } from '@/lib/supabase-browser'
 const COULEUR = '#d58F62'
 const POINTS_PAR_CRITERE = 20
 
-const SIZE = 38
+// TEST ONLY — à supprimer avant la prod
+const TEST_SCORE_100_ID = 'b414f5c6-fee8-4bdb-aaf3-cb055bdfd2c4'
+
+const SIZE = 34
 const CENTER = SIZE / 2
-const RADIUS = 15
-const STROKE_WIDTH = 3
+const RADIUS = 13
+const STROKE_WIDTH = 2.5
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 const INNER_DIAM = (RADIUS - STROKE_WIDTH / 2 - 1) * 2
 const INNER_OFFSET = CENTER - INNER_DIAM / 2
@@ -32,7 +35,7 @@ export default function MiniConfianceVendeur({ userId, onScore }: { userId: stri
         (listingsRes.count ?? 0) > 0,
         !avisRes.error && (avisRes.count ?? 0) > 0,
       ]
-      const s = liste.filter(Boolean).length * POINTS_PAR_CRITERE + 20
+      const s = userId === TEST_SCORE_100_ID ? 100 : liste.filter(Boolean).length * POINTS_PAR_CRITERE + 20
       setScore(s)
       onScore?.(s)
     }
@@ -78,7 +81,7 @@ export default function MiniConfianceVendeur({ userId, onScore }: { userId: stri
           justifyContent: 'center',
         }}
       >
-        <span style={{ color: COULEUR, fontSize: 10, fontWeight: 700, lineHeight: 1 }}>{score}</span>
+        <span style={{ color: COULEUR, fontSize: 9, fontWeight: 700, lineHeight: 1 }}>{score}</span>
       </div>
     </div>
   )
