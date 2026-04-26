@@ -100,13 +100,17 @@ export default function ListingCard({ listing, className = '', compact = false }
 
         {/* Texte sous l'image */}
         <div style={{ padding: compact ? '8px 4px 6px' : '9px 2px 6px' }}>
-          <p className="truncate" style={{ fontSize: compact ? 15 : 16, fontWeight: 600, color: '#1A1A1A' }}>
-            {listing.titre}
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 2 }}>
-            <p style={{ fontSize: compact ? 15 : 16, fontWeight: 700, color: '#1A1A1A' }}>
-              {formatPrix(listing.prix)}
-            </p>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+            {/* Titre + prix à gauche */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: compact ? 13 : 14, fontWeight: 600, color: '#1A1A1A', lineHeight: 1.3, wordBreak: 'break-word' }}>
+                {listing.titre}
+              </p>
+              <p style={{ fontSize: compact ? 14 : 15, fontWeight: 700, color: '#1A1A1A', marginTop: 2 }}>
+                {formatPrix(listing.prix)}
+              </p>
+            </div>
+            {/* Badge indice de confiance à droite */}
             <MiniConfianceVendeur userId={listing.user_id} />
           </div>
           {/* Détails spécifiques à la catégorie — toujours affichés */}
