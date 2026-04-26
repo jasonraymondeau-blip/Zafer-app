@@ -6,9 +6,9 @@ import { createClient } from '@/lib/supabase-browser'
 const COULEUR = '#d58F62'
 const POINTS_PAR_CRITERE = 20
 
-const SIZE = 36
+const SIZE = 40
 const CENTER = SIZE / 2
-const RADIUS = 15
+const RADIUS = 17
 const STROKE_WIDTH = 3
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 const INNER_DIAM = (RADIUS - STROKE_WIDTH / 2 - 1) * 2
@@ -17,19 +17,15 @@ const INNER_OFFSET = CENTER - INNER_DIAM / 2
 export default function MiniConfianceVendeur({ userId }: { userId: string }) {
   const supabase = createClient()
   const [score, setScore] = useState<number | null>(null)
-  const [initiale, setInitiale] = useState('?')
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
   useEffect(() => {
     async function charger() {
       const [profileRes, listingsRes, avisRes] = await Promise.all([
-        supabase.from('profiles').select('prenom, nom, telephone, avatar_url').eq('id', userId).single(),
+        supabase.from('profiles').select('prenom, nom, telephone').eq('id', userId).single(),
         supabase.from('listings').select('id', { count: 'exact', head: true }).eq('user_id', userId),
         supabase.from('avis').select('id', { count: 'exact', head: true }).eq('acheteur_id', userId),
       ])
       const p = profileRes.data
-      if (p?.avatar_url) setAvatarUrl(p.avatar_url)
-      if (p?.prenom) setInitiale(p.prenom.charAt(0).toUpperCase())
       const liste = [
         !!p?.telephone,
         !!(p?.prenom && p?.nom),
@@ -42,7 +38,7 @@ export default function MiniConfianceVendeur({ userId }: { userId: string }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
 
-  if (score === null) return <div style={{ width: SIZE, height: SIZE + 14 }} />
+  if (score === null) return <div style={{ width: SIZE, height: SIZE + 18 }} />
 
   const dashoffset = CIRCUMFERENCE * (1 - score / 100)
 
@@ -75,25 +71,18 @@ export default function MiniConfianceVendeur({ userId }: { userId: string }) {
             width: INNER_DIAM,
             height: INNER_DIAM,
             borderRadius: '50%',
-            overflow: 'hidden',
             background: '#1A1A1A',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          {avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          ) : (
-            <span style={{ color: '#FFFFFF', fontSize: 11, fontWeight: 700 }}>{initiale}</span>
-          )}
+          <span style={{ color: COULEUR, fontSize: 10, fontWeight: 700, lineHeight: 1 }}>{score}</span>
         </div>
       </div>
 
-      <span style={{ fontSize: 10, fontWeight: 600, color: COULEUR, marginTop: 2, lineHeight: 1 }}>
-        {score}
-        <span style={{ fontSize: 9, fontWeight: 400, color: '#AAAAAA' }}>/100</span>
+      <span style={{ fontSize: 9, fontWeight: 600, color: '#888888', marginTop: 3, lineHeight: 1, letterSpacing: 0.2 }}>
+        Confiance
       </span>
     </div>
   )
