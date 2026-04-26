@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { Home, Search, Plus, Heart, User } from 'lucide-react'
 import { useSearchModal } from '@/contexts/SearchModalContext'
 import { useRechercheModal } from '@/contexts/RechercheModalContext'
+import { useAuthModal } from '@/contexts/AuthModalContext'
 import { createClient } from '@/lib/supabase-browser'
 
 const ICON_SIZE = 24
@@ -22,6 +23,7 @@ export default function BottomNav() {
   const pathname = usePathname()
   const { isOpen } = useSearchModal()
   const { isOpen: isRechercheOpen } = useRechercheModal()
+  const { openAuthModal } = useAuthModal()
   const [connecte, setConnecte] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -38,13 +40,13 @@ export default function BottomNav() {
   // Masquer uniquement sur la page détail annonce et quand un modal est ouvert
   if (isOpen || isRechercheOpen || pathname.startsWith('/annonce/')) return null
 
-  // Masquer sur les pages protégées quand non connecté (formulaire de connexion occupe tout l'écran)
-  const surPageProtegee = pathname === '/compte' || pathname === '/favoris' || pathname === '/vendre'
-  if (surPageProtegee && connecte !== true) return null
-
-  // Liens protégés : redirige directement vers /compte si non connecté
-  const hrefFavoris = connecte === false ? '/compte?redirect=/favoris' : '/favoris'
-  const hrefVendre  = connecte === false ? '/compte?redirect=/vendre'  : '/vendre'
+  // Intercepte les clics sur pages protégées si non connecté → ouvre le modal de connexion
+  const protect = (e: React.MouseEvent, dest: string) => {
+    if (connecte === false) {
+      e.preventDefault()
+      openAuthModal(dest)
+    }
+  }
 
   // Actif selon la route
   const rechercheActive = pathname.startsWith('/categories') || pathname.startsWith('/recherche')
@@ -98,8 +100,9 @@ export default function BottomNav() {
 
       {/* ── Vendre — bouton qui dépasse de la navbar ── */}
       <Link
-        href={hrefVendre}
+        href="/vendre"
         aria-label="Vendre"
+        onClick={(e) => protect(e, '/vendre')}
         style={{ ...itemStyle(), position: 'relative', justifyContent: 'flex-end' }}
       >
         {/* Cercle qui dépasse */}
@@ -124,7 +127,7 @@ export default function BottomNav() {
       </Link>
 
       {/* ── Favoris ── */}
-      <Link href={hrefFavoris} aria-label="Favoris" style={itemStyle()}>
+      <Link href="/favoris" aria-label="Favoris" onClick={(e) => protect(e, '/favoris')} style={itemStyle()}>
         <Heart
           size={ICON_SIZE}
           color={COULEUR_NAV}
@@ -134,7 +137,7 @@ export default function BottomNav() {
       </Link>
 
       {/* ── Compte ── */}
-      <Link href="/compte" aria-label="Compte" style={itemStyle()}>
+      <Link href="/compte" aria-label="Compte" onClick={(e) => protect(e, '/compte')} style={itemStyle()}>
         <User
           size={ICON_SIZE}
           color={COULEUR_NAV}
