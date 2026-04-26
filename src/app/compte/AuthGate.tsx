@@ -8,6 +8,7 @@ import { User, ClipboardList, Heart, Settings, LogOut } from 'lucide-react'
 import { createClient } from '@/lib/supabase-browser'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import IndiceConfiance from '@/components/IndiceConfiance'
+import AvatarConfiance from '@/components/AvatarConfiance'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const menuItems: { href: string; Icon: any; label: string }[] = [
@@ -170,11 +171,10 @@ export default function AuthGate() {
     return (
       <div className="max-w-lg mx-auto">
         <div className="pt-6 pb-4 border-b border-gray-100" style={{ paddingLeft: 4 }}>
-          <div className="flex items-end" style={{ gap: 2 }}>
-            {/* height only → width auto pour éviter le letterboxing côté gauche/droite */}
-            <img src="/logo.png" alt="Zafer" style={{ height: 58, width: 'auto', flexShrink: 0 }} />
+          <div className="flex items-center" style={{ gap: 14 }}>
+            <AvatarConfiance user={user} />
 
-            <div style={{ paddingTop: 18 }}>
+            <div>
               <p className="font-bold text-text-main text-lg">
                 {user.user_metadata?.prenom || 'Mon compte'}
               </p>
