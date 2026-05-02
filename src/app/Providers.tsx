@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { SearchModalProvider } from '@/contexts/SearchModalContext'
 import { RechercheModalProvider } from '@/contexts/RechercheModalContext'
 import { AuthModalProvider } from '@/contexts/AuthModalContext'
@@ -8,6 +9,8 @@ import GlobalSearchModal from '@/components/GlobalSearchModal'
 import RechercheModal from '@/components/RechercheModal'
 import AuthModal from '@/components/AuthModal'
 import BottomNav from '@/components/BottomNav'
+
+const MARKETING_ROUTES = ['/waitlist']
 
 // Splash screen — fond blanc, logo + titre + spinner
 function SplashScreen() {
@@ -76,12 +79,18 @@ function useAutoUpdate() {
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [splash, setSplash] = useState(true)
+  const pathname = usePathname()
+  const isMarketing = MARKETING_ROUTES.some(r => pathname.startsWith(r))
   useAutoUpdate()
 
   useEffect(() => {
     const t = setTimeout(() => setSplash(false), 2000)
     return () => clearTimeout(t)
   }, [])
+
+  if (isMarketing) {
+    return <>{children}</>
+  }
 
   return (
     <SearchModalProvider>
