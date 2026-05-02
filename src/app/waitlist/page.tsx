@@ -1,696 +1,409 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { useState } from 'react'
+import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
 
-// ─── Animation variants ──────────────────────────────────────────────────────
+// ─── Brand tokens ────────────────────────────────────────────────────────────
+// bg:      #0C0806   deep warm black
+// surface: #17100A   dark warm brown
+// line:    #2C1E14   border
+// accent:  #B85C38   terracotta (logo color)
+// warm:    #F5ECE2   cream text
+// muted:   #7A6254   warm gray
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease } },
-}
+// ─── Fade-up variant ─────────────────────────────────────────────────────────
+const fu = (delay = 0) => ({
+  initial: { opacity: 0, y: 22 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-60px' },
+  transition: { duration: 0.55, ease, delay },
+})
 
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
-}
+// ─── Email form ──────────────────────────────────────────────────────────────
+type Status = 'idle' | 'loading' | 'success' | 'error'
 
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.92 },
-  show: { opacity: 1, scale: 1, transition: { duration: 0.5, ease } },
-}
-
-// ─── Data ────────────────────────────────────────────────────────────────────
-
-const FEATURES = [
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.7}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-      </svg>
-    ),
-    label: 'Rapide',
-    title: 'Publie en 30 secondes',
-    desc: 'Prends une photo, fixe ton prix, et ton annonce est en ligne. Aussi simple que ça.',
-    gradient: 'from-orange-500/20 to-amber-500/10',
-    border: 'border-orange-500/15',
-    iconColor: 'text-orange-400',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.7}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-      </svg>
-    ),
-    label: 'Sécurisé',
-    title: 'Transactions de confiance',
-    desc: 'Profils vérifiés, système de notes et badges de confiance pour acheter sereinement.',
-    gradient: 'from-emerald-500/20 to-teal-500/10',
-    border: 'border-emerald-500/15',
-    iconColor: 'text-emerald-400',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.7}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-      </svg>
-    ),
-    label: 'Local',
-    title: 'Deals près de chez toi',
-    desc: 'Trouve des acheteurs et vendeurs dans ta ville, dans ton quartier, à Maurice.',
-    gradient: 'from-blue-500/20 to-indigo-500/10',
-    border: 'border-blue-500/15',
-    iconColor: 'text-blue-400',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.7}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
-      </svg>
-    ),
-    label: 'Direct',
-    title: 'Chat sans intermédiaire',
-    desc: 'Discute directement avec les vendeurs. Pas de frais cachés, pas de plateforme entre vous.',
-    gradient: 'from-violet-500/20 to-purple-500/10',
-    border: 'border-violet-500/15',
-    iconColor: 'text-violet-400',
-  },
-]
-
-const AVATARS = [
-  { initials: 'MR', bg: 'from-orange-400 to-rose-500' },
-  { initials: 'SA', bg: 'from-amber-400 to-orange-500' },
-  { initials: 'JP', bg: 'from-emerald-400 to-teal-500' },
-  { initials: 'KD', bg: 'from-blue-400 to-indigo-500' },
-  { initials: 'NB', bg: 'from-violet-400 to-purple-500' },
-]
-
-const PERKS = [
-  'Interface en français et créole mauricien',
-  'Vendeurs et acheteurs locaux uniquement',
-  'Zéro commission sur tes ventes',
-]
-
-const APP_LISTINGS = [
-  { title: 'iPhone 14 Pro', price: 'Rs 28 000', cat: 'Téléphones', color: 'from-blue-500/25 to-indigo-500/10', dot: 'bg-blue-400' },
-  { title: 'Scooter Honda', price: 'Rs 45 000', cat: 'Véhicules', color: 'from-orange-500/25 to-amber-500/10', dot: 'bg-orange-400' },
-  { title: 'Canapé cuir 3 places', price: 'Rs 8 500', cat: 'Maison', color: 'from-emerald-500/25 to-teal-500/10', dot: 'bg-emerald-400' },
-]
-
-// ─── Email Form ──────────────────────────────────────────────────────────────
-
-type FormStatus = 'idle' | 'loading' | 'success' | 'error'
-
-function EmailForm({ compact = false }: { compact?: boolean }) {
+function EmailForm() {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<FormStatus>('idle')
+  const [status, setStatus] = useState<Status>('idle')
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function submit(e: React.FormEvent) {
     e.preventDefault()
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setStatus('error')
-      return
+      setStatus('error'); return
     }
     setStatus('loading')
-    // Simulate network — replace with real API call when ready
     await new Promise(r => setTimeout(r, 1100))
     setStatus('success')
   }
 
-  if (status === 'success') {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.94, y: 8 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.4, ease }}
-        className="flex items-center gap-4 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl px-5 py-4"
-      >
-        <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
-          <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-emerald-400">
-            <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-          </svg>
-        </div>
-        <div>
-          <p className="font-semibold text-emerald-300">Tu es sur la liste !</p>
-          <p className="text-zinc-400 text-sm mt-0.5">On te contacte en premier lors du lancement. 🇲🇺</p>
-        </div>
-      </motion.div>
-    )
-  }
+  if (status === 'success') return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+      className="flex items-center gap-3 rounded-2xl px-5 py-4"
+      style={{ background: 'rgba(184,92,56,0.12)', border: '1px solid rgba(184,92,56,0.25)' }}
+    >
+      <span className="text-xl">🎉</span>
+      <div>
+        <p style={{ color: '#D4835A', fontWeight: 600 }}>Tu es sur la liste !</p>
+        <p style={{ color: '#7A6254', fontSize: 13, marginTop: 2 }}>On te prévient en premier au lancement. 🇲🇺</p>
+      </div>
+    </motion.div>
+  )
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
-      <div className={`flex gap-3 ${compact ? 'flex-col' : 'flex-col sm:flex-row'}`}>
-        <div className="relative flex-1">
-          <input
-            type="email"
-            value={email}
-            onChange={e => { setEmail(e.target.value); if (status === 'error') setStatus('idle') }}
-            placeholder="ton@email.com"
-            className={[
-              'waitlist-input w-full rounded-xl px-4 py-3.5 text-zinc-100 text-sm',
-              'placeholder:text-zinc-600 focus:outline-none transition-all duration-200',
-              'border bg-white/[0.07]',
-              status === 'error'
-                ? 'border-red-500/50 focus:border-red-400/70'
-                : 'border-white/10 focus:border-orange-500/50 focus:bg-white/[0.10]',
-            ].join(' ')}
-            required
-          />
-        </div>
-
+    <form onSubmit={submit} className="w-full">
+      <div className="flex flex-col sm:flex-row gap-2.5">
+        <input
+          type="email" value={email} placeholder="ton@email.com"
+          onChange={e => { setEmail(e.target.value); if (status === 'error') setStatus('idle') }}
+          className="waitlist-input flex-1 rounded-xl px-4 py-3.5 text-sm outline-none transition-all duration-200"
+          style={{
+            background: 'rgba(245,236,226,0.06)',
+            border: status === 'error' ? '1px solid rgba(220,80,60,0.5)' : '1px solid rgba(245,236,226,0.12)',
+            color: '#F5ECE2',
+          }}
+          required
+        />
         <motion.button
-          type="submit"
-          whileHover={{ scale: 1.02, boxShadow: '0 0 24px rgba(249,115,22,0.35)' }}
-          whileTap={{ scale: 0.97 }}
+          type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
           disabled={status === 'loading'}
-          className="relative overflow-hidden bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold text-sm px-7 py-3.5 rounded-xl whitespace-nowrap disabled:opacity-60 cursor-pointer transition-all duration-200"
+          className="flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 text-sm font-semibold whitespace-nowrap transition-all duration-200"
+          style={{ background: '#B85C38', color: '#FDF6EF', cursor: 'pointer' }}
         >
           <AnimatePresence mode="wait" initial={false}>
-            {status === 'loading' ? (
-              <motion.span
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center justify-center gap-2"
-              >
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Inscription…
-              </motion.span>
-            ) : (
-              <motion.span
-                key="cta"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                Rejoindre la liste
-              </motion.span>
-            )}
+            {status === 'loading'
+              ? <motion.span key="l" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-2">
+                  <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                  Inscription…
+                </motion.span>
+              : <motion.span key="c" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  Rejoindre la liste →
+                </motion.span>
+            }
           </AnimatePresence>
         </motion.button>
       </div>
-      <AnimatePresence>
-        {status === 'error' && (
-          <motion.p
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="text-red-400 text-xs mt-2 ml-1"
-          >
-            Adresse email invalide — vérifie le format
-          </motion.p>
-        )}
-      </AnimatePresence>
+      {status === 'error' && (
+        <p style={{ color: '#E05040', fontSize: 12, marginTop: 8, marginLeft: 4 }}>
+          Adresse email invalide
+        </p>
+      )}
     </form>
   )
 }
 
-// ─── Phone Mockup ────────────────────────────────────────────────────────────
-
-function PhoneMockup() {
+// ─── Phone frame with screenshot or placeholder ───────────────────────────
+function Phone({ src, label, delay = 0 }: { src: string; label: string; delay?: number }) {
+  const [err, setErr] = useState(false)
   return (
-    <div className="relative mx-auto" style={{ width: 256, height: 520 }}>
-      {/* Glow behind phone */}
-      <div className="absolute inset-0 rounded-[44px] bg-orange-500/10 blur-2xl scale-110" />
-
-      {/* Phone body */}
-      <div className="relative w-full h-full rounded-[44px] bg-gradient-to-b from-zinc-700/80 to-zinc-800/80 border border-white/10 shadow-2xl shadow-black/60 backdrop-blur-sm overflow-hidden">
-        {/* Side buttons */}
-        <div className="absolute left-[-3px] top-24 w-1 h-8 bg-zinc-600 rounded-l-full" />
-        <div className="absolute left-[-3px] top-36 w-1 h-12 bg-zinc-600 rounded-l-full" />
-        <div className="absolute left-[-3px] top-52 w-1 h-12 bg-zinc-600 rounded-l-full" />
-        <div className="absolute right-[-3px] top-32 w-1 h-16 bg-zinc-600 rounded-r-full" />
-
-        {/* Screen */}
-        <div className="absolute inset-[2.5px] rounded-[42px] bg-[#0F0E0D] overflow-hidden">
-          {/* Dynamic Island */}
-          <div className="absolute top-3.5 left-1/2 -translate-x-1/2 w-[72px] h-6 bg-black rounded-full z-20 flex items-center justify-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-zinc-800 border border-zinc-700" />
-            <div className="w-1.5 h-1.5 rounded-full bg-zinc-800/60" />
+    <motion.div {...fu(delay)} className="relative shrink-0" style={{ width: 200, height: 432 }}>
+      {/* Frame */}
+      <div className="absolute inset-0 rounded-[36px] shadow-2xl overflow-hidden"
+        style={{ background: '#1A1108', border: '1px solid rgba(245,236,226,0.08)', boxShadow: '0 32px 64px rgba(0,0,0,0.5)' }}>
+        {/* Notch */}
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-5 rounded-full z-20" style={{ background: '#0C0806' }} />
+        {/* Screen area */}
+        {!err ? (
+          <img
+            src={src} alt={label} onError={() => setErr(true)}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ borderRadius: 35 }}
+          />
+        ) : (
+          /* Placeholder shown when image not found */
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6" style={{ background: '#17100A' }}>
+            <Image src="/logo.png" alt="Zafer" width={48} height={48} className="opacity-40" />
+            <p className="text-center text-xs" style={{ color: '#4A3428', lineHeight: 1.4 }}>
+              Ajoute<br/><code style={{ color: '#7A6254' }}>{src}</code><br/>dans /public
+            </p>
           </div>
-
-          {/* Status bar */}
-          <div className="absolute top-1 left-4 right-4 flex items-center justify-between z-10">
-            <span className="text-white text-[9px] font-semibold opacity-60">9:41</span>
-            <div className="flex items-center gap-1 opacity-60">
-              <div className="flex gap-0.5 items-end h-3">
-                {[2, 3, 4, 4].map((h, i) => (
-                  <div key={i} className="w-0.5 bg-white rounded-sm" style={{ height: `${h * 2}px` }} />
-                ))}
-              </div>
-              <div className="w-3 h-1.5 border border-white/60 rounded-sm">
-                <div className="w-2/3 h-full bg-white/60 rounded-sm" />
-              </div>
-            </div>
-          </div>
-
-          {/* App UI */}
-          <div className="absolute inset-0 pt-12 px-3.5 pb-4 flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-zinc-500 text-[9px]">Bonjour 👋</p>
-                <p className="text-white font-bold text-sm leading-tight">Bonne journée</p>
-              </div>
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center">
-                <span className="text-white text-[9px] font-bold">JP</span>
-              </div>
-            </div>
-
-            {/* Search */}
-            <div className="bg-white/6 border border-white/8 rounded-xl px-3 py-2 mb-3 flex items-center gap-2">
-              <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-zinc-500 shrink-0">
-                <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
-              </svg>
-              <span className="text-zinc-600 text-[10px]">Rechercher sur Zafer…</span>
-            </div>
-
-            {/* Category chips */}
-            <div className="flex gap-1.5 mb-3 overflow-hidden">
-              {['Tout', 'Véhicules', 'Phones'].map((cat, i) => (
-                <span
-                  key={cat}
-                  className={`text-[9px] px-2 py-1 rounded-full whitespace-nowrap ${i === 0 ? 'bg-orange-500/30 border border-orange-500/40 text-orange-300' : 'bg-white/5 border border-white/8 text-zinc-500'}`}
-                >
-                  {cat}
-                </span>
-              ))}
-            </div>
-
-            {/* Listings */}
-            <div className="flex flex-col gap-2 flex-1">
-              {APP_LISTINGS.map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.7 + i * 0.18, duration: 0.4, ease }}
-                  className={`bg-gradient-to-r ${item.color} border border-white/8 rounded-xl p-2.5 flex items-center gap-2.5`}
-                >
-                  <div className="w-10 h-10 rounded-lg bg-white/8 border border-white/8 shrink-0 flex items-center justify-center">
-                    <div className={`w-3 h-3 rounded-full ${item.dot} opacity-60`} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-white text-[10px] font-semibold truncate leading-tight">{item.title}</p>
-                    <p className="text-zinc-500 text-[8px] leading-tight">{item.cat}</p>
-                    <p className="text-orange-400 text-[10px] font-bold leading-tight">{item.price}</p>
-                  </div>
-                  <div className="w-5 h-5 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                    <svg viewBox="0 0 20 20" fill="currentColor" className="w-2.5 h-2.5 text-zinc-500">
-                      <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682 22.045 22.045 0 01-2.582-2.184C4.045 12.637 2 10.62 2 8c0-2.21 1.79-4 4-4 1.13 0 2.13.49 2.823 1.27A3.986 3.986 0 0112 4c2.21 0 4 1.79 4 4 0 2.62-2.045 4.637-3.885 6.036a22.045 22.045 0 01-2.582 2.184 20.759 20.759 0 01-1.18.692l-.005.003-.001.001-.001.001a.75.75 0 01-.693 0l-.001-.001z" />
-                    </svg>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Bottom nav bar */}
-            <div className="mt-3 bg-white/4 border border-white/8 rounded-2xl px-4 py-2 flex items-center justify-around">
-              {[
-                <path key="h" strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />,
-                <path key="s" strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0016.803 15.803z" />,
-                <path key="p" strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />,
-                <path key="u" strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />,
-              ].map((path, i) => (
-                <div
-                  key={i}
-                  className={`w-7 h-7 flex items-center justify-center rounded-xl ${i === 0 ? 'bg-orange-500/20' : ''}`}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={`w-3.5 h-3.5 ${i === 0 ? 'text-orange-400' : 'text-zinc-600'}`}>
-                    {path}
-                  </svg>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        )}
       </div>
-
-      {/* Floating badges */}
-      <motion.div
-        animate={{ y: [-5, 5, -5] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute -right-10 top-20 bg-zinc-900/90 backdrop-blur-md border border-white/10 rounded-2xl px-3 py-2 shadow-xl"
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-base">🎉</span>
-          <div>
-            <p className="text-white text-[10px] font-semibold leading-tight">Vendu en 2h !</p>
-            <p className="text-zinc-500 text-[8px]">Scooter Honda</p>
-          </div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        animate={{ y: [5, -5, 5] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
-        className="absolute -left-12 bottom-32 bg-zinc-900/90 backdrop-blur-md border border-orange-500/20 rounded-2xl px-3 py-2 shadow-xl"
-      >
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-          <p className="text-orange-300 text-[10px] font-semibold">+12 vues aujourd&apos;hui</p>
-        </div>
-      </motion.div>
-    </div>
-  )
-}
-
-// ─── Section wrapper with scroll reveal ─────────────────────────────────────
-
-function RevealSection({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 32 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.55, ease, delay }}
-      className={className}
-    >
-      {children}
     </motion.div>
   )
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Feature bento card ───────────────────────────────────────────────────
+function FeatureCard({
+  num, title, desc, icon, accent = false, wide = false, tall = false, delay = 0,
+}: {
+  num: string; title: string; desc: string; icon: React.ReactNode
+  accent?: boolean; wide?: boolean; tall?: boolean; delay?: number
+}) {
+  return (
+    <motion.div
+      {...fu(delay)}
+      className={`relative flex flex-col justify-between p-6 rounded-3xl overflow-hidden ${wide ? 'col-span-2' : ''} ${tall ? 'row-span-2' : ''}`}
+      style={{
+        background: accent ? 'rgba(184,92,56,0.12)' : 'rgba(245,236,226,0.04)',
+        border: accent ? '1px solid rgba(184,92,56,0.25)' : '1px solid rgba(245,236,226,0.07)',
+        minHeight: tall ? 320 : 200,
+      }}
+      whileHover={{ scale: 1.015 }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* Big number */}
+      <span
+        className="absolute top-4 right-5 font-bold select-none"
+        style={{ fontFamily: "'Syne', sans-serif", fontSize: 64, color: accent ? 'rgba(184,92,56,0.15)' : 'rgba(245,236,226,0.05)', lineHeight: 1 }}
+      >
+        {num}
+      </span>
+      {/* Icon */}
+      <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-auto"
+        style={{ background: accent ? 'rgba(184,92,56,0.2)' : 'rgba(245,236,226,0.06)', border: accent ? '1px solid rgba(184,92,56,0.3)' : '1px solid rgba(245,236,226,0.08)' }}>
+        <span style={{ color: accent ? '#C8774E' : '#8A7266', display: 'flex' }}>{icon}</span>
+      </div>
+      <div className="mt-8">
+        <h3 className="font-semibold mb-2 leading-snug" style={{ color: '#F5ECE2', fontSize: 16 }}>{title}</h3>
+        <p style={{ color: '#7A6254', fontSize: 13, lineHeight: 1.6 }}>{desc}</p>
+      </div>
+    </motion.div>
+  )
+}
 
+// ─── Marquee strip ────────────────────────────────────────────────────────
+const TICKER = ['Achète', 'Vends', 'Zafer', 'Île Maurice', 'Sans commission', 'Sécurisé', 'Local', 'Gratuit']
+
+function Marquee() {
+  const items = [...TICKER, ...TICKER]
+  return (
+    <div className="w-full overflow-hidden py-5" style={{ borderTop: '1px solid rgba(245,236,226,0.07)', borderBottom: '1px solid rgba(245,236,226,0.07)' }}>
+      <div className="flex" style={{ animation: 'marquee 28s linear infinite', width: 'max-content' }}>
+        {items.map((t, i) => (
+          <span key={i} className="flex items-center gap-5 mx-5 text-sm font-medium whitespace-nowrap" style={{ color: '#4A3828', fontFamily: "'Syne', sans-serif", letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            {t}
+            <span style={{ color: '#B85C38', fontSize: 10 }}>✦</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────
 export default function WaitlistPage() {
   return (
-    <div
-      className="relative min-h-screen overflow-x-hidden"
-      style={{ background: '#0A0908', fontFamily: "'Plus Jakarta Sans', Inter, sans-serif" }}
-    >
-      {/* ── Background: animated gradient orbs ──────────────────────────── */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
-        <div
-          className="absolute rounded-full"
-          style={{
-            top: '-15%',
-            right: '-8%',
-            width: 700,
-            height: 700,
-            background: 'radial-gradient(circle, rgba(249,115,22,0.14) 0%, transparent 70%)',
-            animation: 'orb-drift 14s ease-in-out infinite',
-          }}
-        />
-        <div
-          className="absolute rounded-full"
-          style={{
-            bottom: '-20%',
-            left: '-10%',
-            width: 600,
-            height: 600,
-            background: 'radial-gradient(circle, rgba(245,158,11,0.10) 0%, transparent 70%)',
-            animation: 'orb-drift 18s ease-in-out infinite reverse',
-          }}
-        />
-        <div
-          className="absolute rounded-full"
-          style={{
-            top: '45%',
-            left: '30%',
-            width: 400,
-            height: 400,
-            background: 'radial-gradient(circle, rgba(234,88,12,0.06) 0%, transparent 70%)',
-            animation: 'orb-drift 22s ease-in-out infinite 4s',
-          }}
-        />
-        {/* Subtle grid */}
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-          }}
-        />
-      </div>
+    <div style={{ background: '#0C0806', minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', sans-serif", overflowX: 'hidden' }}>
 
-      {/* ── Navbar ───────────────────────────────────────────────────────── */}
+      {/* ── Nav ─────────────────────────────────────────────────────────── */}
       <motion.nav
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease }}
-        className="relative z-20 flex items-center justify-between px-6 lg:px-10 py-5 max-w-6xl mx-auto"
+        initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease }}
+        className="flex items-center justify-between px-6 lg:px-12 py-5 max-w-7xl mx-auto"
       >
-        <span
-          className="font-extrabold text-xl tracking-tight"
-          style={{ background: 'linear-gradient(90deg, #fb923c, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-        >
-          Zafer
-        </span>
+        <Image src="/logo-splash.png" alt="Zafer" width={100} height={50} style={{ objectFit: 'contain' }} />
 
         <div className="flex items-center gap-3">
-          <span className="hidden sm:flex items-center gap-2 text-xs text-zinc-500 border border-zinc-800 rounded-full px-3 py-1.5">
-            <span>🇲🇺</span>
-            <span>Île Maurice</span>
+          <span className="hidden sm:block text-xs font-medium px-3 py-1.5 rounded-full"
+            style={{ background: 'rgba(184,92,56,0.12)', color: '#C8774E', border: '1px solid rgba(184,92,56,0.2)' }}>
+            🇲🇺 Bientôt disponible
           </span>
-          <a
-            href="#waitlist-form"
-            className="text-xs font-semibold bg-white/8 hover:bg-white/12 border border-white/10 text-zinc-200 px-4 py-2 rounded-full transition-colors duration-200 cursor-pointer"
-          >
-            Rejoindre →
+          <a href="#form"
+            className="text-xs font-semibold px-4 py-2 rounded-full transition-colors duration-200"
+            style={{ background: '#B85C38', color: '#FDF6EF' }}>
+            Rejoindre
           </a>
         </div>
       </motion.nav>
 
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 lg:px-10 pt-16 pb-24 max-w-6xl mx-auto">
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          animate="show"
-          className="max-w-3xl mx-auto text-center"
-        >
-          {/* Badge */}
-          <motion.div variants={fadeUp} className="inline-flex items-center gap-2.5 mb-8">
-            <span className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-4 py-1.5 text-orange-400 text-xs font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-              Bientôt disponible à l&apos;île Maurice
+      {/* ── Hero ────────────────────────────────────────────────────────── */}
+      <section className="px-6 lg:px-12 pt-16 pb-24 max-w-7xl mx-auto">
+        <div className="max-w-4xl">
+
+          {/* Label */}
+          <motion.div {...fu(0)} className="flex items-center gap-2 mb-8">
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#B85C38' }} />
+            <span className="text-xs tracking-widest uppercase" style={{ color: '#7A6254', fontFamily: "'Syne', sans-serif" }}>
+              La marketplace de Maurice
             </span>
           </motion.div>
 
-          {/* Headline */}
+          {/* Headline — editorial */}
           <motion.h1
-            variants={fadeUp}
-            className="text-[clamp(2.75rem,7vw,5.5rem)] font-extrabold tracking-tight leading-[1.04] mb-6 text-zinc-50"
+            {...fu(0.05)}
+            style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, lineHeight: 1.02, color: '#F5ECE2', letterSpacing: '-0.02em' }}
+            className="text-[clamp(3rem,8vw,7rem)] mb-8"
           >
-            Achète. Vends.{' '}
-            <br className="hidden sm:block" />
-            <span
-              style={{
-                background: 'linear-gradient(135deg, #fb923c 0%, #f59e0b 50%, #fb923c 100%)',
-                backgroundSize: '200% auto',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                animation: 'gradient-pan 4s linear infinite',
-              }}
-            >
-              Instantanément.
-            </span>
+            Achète.<br />
+            Vends.<br />
+            <span style={{ color: '#B85C38' }}>Zafer.</span>
           </motion.h1>
 
-          {/* Subheadline */}
-          <motion.p
-            variants={fadeUp}
-            className="text-lg sm:text-xl text-zinc-400 leading-relaxed max-w-xl mx-auto mb-10"
-          >
-            Zafer est la façon la plus rapide d&apos;acheter et vendre entre particuliers à Maurice —
+          {/* Sub */}
+          <motion.p {...fu(0.1)} className="text-lg mb-10 max-w-lg leading-relaxed" style={{ color: '#7A6254' }}>
+            La façon la plus rapide d&apos;acheter et vendre entre particuliers à l&apos;île Maurice —
             sans arnaque, sans commission.
           </motion.p>
 
           {/* Form */}
-          <motion.div variants={fadeUp} id="waitlist-form" className="max-w-lg mx-auto mb-8">
+          <motion.div {...fu(0.15)} id="form" className="max-w-lg mb-10">
             <EmailForm />
           </motion.div>
 
           {/* Social proof */}
-          <motion.div
-            variants={fadeUp}
-            className="flex items-center justify-center gap-3"
-          >
-            <div className="flex -space-x-2.5">
-              {AVATARS.map(({ initials, bg }, i) => (
-                <div
-                  key={initials}
-                  className={`w-9 h-9 rounded-full bg-gradient-to-br ${bg} border-2 border-[#0A0908] flex items-center justify-center text-[10px] font-bold text-white shadow-sm`}
-                  style={{ zIndex: AVATARS.length - i }}
-                >
-                  {initials}
+          <motion.div {...fu(0.2)} className="flex items-center gap-3">
+            <div className="flex -space-x-2">
+              {['#B85C38', '#7A9E7E', '#5B7FA6', '#9A6B9A', '#C8A24A'].map((c, i) => (
+                <div key={i} className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-[9px] font-bold text-white"
+                  style={{ background: c, borderColor: '#0C0806', zIndex: 5 - i }}>
+                  {['MR', 'SA', 'JP', 'KD', 'NB'][i]}
                 </div>
               ))}
             </div>
-            <p className="text-zinc-400 text-sm">
-              <span className="text-zinc-200 font-semibold">1 200+</span> personnes déjà en attente
+            <p style={{ color: '#7A6254', fontSize: 13 }}>
+              <span style={{ color: '#F5ECE2', fontWeight: 600 }}>1 200+</span> personnes déjà en attente
             </p>
           </motion.div>
-        </motion.div>
+        </div>
       </section>
 
-      {/* ── Features ─────────────────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 lg:px-10 py-20 max-w-6xl mx-auto">
-        <RevealSection className="text-center mb-14">
-          <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest mb-3">Pourquoi Zafer</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-zinc-50 mb-4">
+      {/* ── Marquee ─────────────────────────────────────────────────────── */}
+      <Marquee />
+
+      {/* ── Bento features ──────────────────────────────────────────────── */}
+      <section className="px-6 lg:px-12 py-24 max-w-7xl mx-auto">
+        <motion.div {...fu(0)} className="mb-14">
+          <p className="text-xs tracking-widest uppercase mb-3" style={{ color: '#B85C38', fontFamily: "'Syne', sans-serif" }}>
+            Pourquoi Zafer
+          </p>
+          <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: '#F5ECE2', fontSize: 'clamp(1.75rem, 3vw, 2.75rem)' }}>
             Tout ce dont tu as besoin
           </h2>
-          <p className="text-zinc-400 max-w-md mx-auto">
-            Simple, rapide, et conçu spécialement pour l&apos;île Maurice.
-          </p>
-        </RevealSection>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {FEATURES.map((feat, i) => (
-            <RevealSection key={i} delay={i * 0.08}>
-              <motion.div
-                whileHover={{ scale: 1.02, y: -2 }}
-                transition={{ duration: 0.2 }}
-                className={`group relative bg-gradient-to-br ${feat.gradient} border ${feat.border} rounded-2xl p-6 cursor-default overflow-hidden`}
-              >
-                <div className="absolute inset-0 bg-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
-                <div className={`inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/5 border border-white/8 mb-4 ${feat.iconColor}`}>
-                  {feat.icon}
-                </div>
-                <div className="inline-flex items-center gap-1.5 bg-white/5 border border-white/8 rounded-full px-2.5 py-0.5 mb-3 ml-2">
-                  <span className="text-zinc-500 text-[10px] font-medium">{feat.label}</span>
-                </div>
-                <h3 className="font-semibold text-lg text-zinc-100 mb-2">{feat.title}</h3>
-                <p className="text-zinc-400 text-sm leading-relaxed">{feat.desc}</p>
-              </motion.div>
-            </RevealSection>
-          ))}
+        {/* Bento grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+          {/* 01 — Confiance (accent, tall on large) */}
+          <FeatureCard
+            num="01" accent tall delay={0}
+            title="Vendeurs & acheteurs de confiance"
+            desc="Chaque profil affiche un indice de confiance calculé selon les avis, la vérification d'identité et l'historique de transactions."
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            }
+          />
+
+          {/* 02 — WhatsApp */}
+          <FeatureCard
+            num="02" delay={0.08}
+            title="Discussion directe sur WhatsApp"
+            desc="Un tap suffit pour contacter le vendeur directement sur WhatsApp. Pas de messagerie interne, pas d'intermédiaire."
+            icon={
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            }
+          />
+
+          {/* 03 — Local */}
+          <FeatureCard
+            num="03" delay={0.12}
+            title="Vends & achète près de chez toi"
+            desc="Les annonces autour de toi en priorité. Rencontre les vendeurs dans ta ville, dans ton quartier."
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+              </svg>
+            }
+          />
+
+          {/* 04 — 30 secondes (wide) */}
+          <FeatureCard
+            num="04" wide delay={0.16}
+            title="Publie en 30 secondes"
+            desc="Photo + prix + description. Ton annonce est en ligne immédiatement, visible par des milliers d'acheteurs à Maurice."
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+              </svg>
+            }
+          />
         </div>
       </section>
 
-      {/* ── App Mockup + copy ────────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 lg:px-10 py-20 max-w-6xl mx-auto">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
+      {/* ── App screenshots ──────────────────────────────────────────────── */}
+      <section className="py-24 overflow-hidden" style={{ background: '#0F0A07' }}>
+        <div className="px-6 lg:px-12 max-w-7xl mx-auto">
 
-          {/* Copy */}
-          <RevealSection className="flex-1 max-w-lg lg:max-w-none">
-            <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest mb-4">L&apos;app</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-zinc-50 mb-6 leading-tight">
-              Une marketplace pensée pour{' '}
-              <span
-                style={{
-                  background: 'linear-gradient(90deg, #fb923c, #f59e0b)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                les Mauriciens
-              </span>
-            </h2>
-            <p className="text-zinc-400 leading-relaxed mb-8 text-base sm:text-lg">
-              Que tu veuilles vendre ton ancien scooter, un canapé ou ton dernier iPhone —
-              Zafer rend ça simple. Rencontre des acheteurs sérieux près de chez toi.
-            </p>
+          <div className="flex flex-col lg:flex-row items-center gap-16">
 
-            <ul className="space-y-3.5">
-              {PERKS.map((perk, i) => (
-                <RevealSection key={i} delay={0.15 + i * 0.1}>
-                  <li className="flex items-center gap-3 text-zinc-300 text-sm sm:text-base">
-                    <span className="w-6 h-6 rounded-full bg-orange-500/15 border border-orange-500/25 flex items-center justify-center shrink-0">
-                      <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-orange-400">
-                        <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-                      </svg>
-                    </span>
-                    {perk}
-                  </li>
-                </RevealSection>
-              ))}
-            </ul>
-          </RevealSection>
+            {/* Copy */}
+            <div className="flex-1 max-w-lg">
+              <motion.p {...fu(0)} className="text-xs tracking-widest uppercase mb-4" style={{ color: '#B85C38', fontFamily: "'Syne', sans-serif" }}>
+                L&apos;application
+              </motion.p>
+              <motion.h2 {...fu(0.05)} style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: '#F5ECE2', fontSize: 'clamp(1.75rem, 3vw, 2.75rem)', lineHeight: 1.1 }} className="mb-6">
+                Une app faite pour<br />
+                <span style={{ color: '#B85C38' }}>les Mauriciens</span>
+              </motion.h2>
+              <motion.p {...fu(0.1)} className="leading-relaxed mb-10" style={{ color: '#7A6254', fontSize: 15 }}>
+                Interface en français et créole, annonces locales, et un système de confiance unique —
+                Zafer est la première marketplace vraiment pensée pour l&apos;île Maurice.
+              </motion.p>
 
-          {/* Phone */}
-          <RevealSection className="flex-1 flex justify-center lg:justify-end" delay={0.15}>
-            <PhoneMockup />
-          </RevealSection>
-        </div>
-      </section>
-
-      {/* ── Scarcity banner ──────────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 lg:px-10 py-16 max-w-6xl mx-auto">
-        <RevealSection>
-          <div className="relative overflow-hidden rounded-3xl border border-orange-500/20 bg-gradient-to-br from-orange-500/8 to-amber-500/5 px-8 py-14 text-center">
-            {/* Corner glows */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-
-            <div className="relative">
-              <div className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/25 rounded-full px-4 py-1.5 text-orange-400 text-xs font-semibold mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-                Accès limité
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { val: '30s', label: 'pour publier une annonce' },
+                  { val: '0%', label: 'de commission sur les ventes' },
+                  { val: '100%', label: 'local, vendeurs mauriciens' },
+                  { val: '1', label: 'tap pour contacter sur WhatsApp' },
+                ].map(({ val, label }, i) => (
+                  <motion.div key={i} {...fu(0.12 + i * 0.06)} className="rounded-2xl p-4"
+                    style={{ background: 'rgba(245,236,226,0.04)', border: '1px solid rgba(245,236,226,0.07)' }}>
+                    <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 28, color: '#B85C38', lineHeight: 1 }}>
+                      {val}
+                    </p>
+                    <p style={{ color: '#7A6254', fontSize: 12, marginTop: 4 }}>{label}</p>
+                  </motion.div>
+                ))}
               </div>
+            </div>
 
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-zinc-50 mb-4">
-                Les premiers places partent vite
-              </h2>
-              <p className="text-zinc-400 text-base sm:text-lg max-w-md mx-auto">
-                On ouvre l&apos;accès beta à un nombre limité d&apos;utilisateurs.
-                <br />
-                <span className="text-orange-400 font-semibold">Sois parmi les premiers à Maurice.</span>
-              </p>
+            {/* Phones — load from /public/screens/ */}
+            <div className="flex items-end gap-5 justify-center lg:justify-end">
+              <Phone src="/screens/screen-1.png" label="Accueil Zafer" delay={0} />
+              <div style={{ marginBottom: 40 }}>
+                <Phone src="/screens/screen-2.png" label="Annonce Zafer" delay={0.1} />
+              </div>
+              <Phone src="/screens/screen-3.png" label="Profil Zafer" delay={0.2} />
             </div>
           </div>
-        </RevealSection>
+        </div>
       </section>
 
       {/* ── Final CTA ────────────────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 lg:px-10 py-20 max-w-6xl mx-auto">
-        <RevealSection className="max-w-lg mx-auto text-center">
-          <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
-            <motion.div variants={scaleIn} className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/20 flex items-center justify-center mx-auto mb-6">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="w-6 h-6 text-orange-400">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-              </svg>
-            </motion.div>
-
-            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-zinc-50 mb-4">
-              Prêt à essayer Zafer ?
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-zinc-400 mb-8 text-base">
-              Inscris-toi maintenant et reçois un accès anticipé dès le lancement.
-              <br />
-              <span className="text-zinc-500 text-sm">Gratuit. Sans spam. Désabonnement en 1 clic.</span>
-            </motion.p>
-
-            <motion.div variants={fadeUp}>
-              <EmailForm compact />
-            </motion.div>
-          </motion.div>
-        </RevealSection>
+      <section className="px-6 lg:px-12 py-32 max-w-7xl mx-auto">
+        <motion.div {...fu(0)} className="max-w-2xl">
+          <p className="text-xs tracking-widest uppercase mb-5" style={{ color: '#B85C38', fontFamily: "'Syne', sans-serif" }}>
+            Accès limité · Lancement imminent
+          </p>
+          <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: '#F5ECE2', fontSize: 'clamp(2rem, 4vw, 4rem)', lineHeight: 1.05, letterSpacing: '-0.02em' }} className="mb-8">
+            Sois parmi les<br />
+            <span style={{ color: '#B85C38' }}>premiers à Maurice.</span>
+          </h2>
+          <div className="max-w-lg">
+            <EmailForm />
+          </div>
+          <p style={{ color: '#4A3428', fontSize: 12, marginTop: 16 }}>
+            Gratuit. Sans spam. Désabonnement en 1 clic.
+          </p>
+        </motion.div>
       </section>
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <footer className="relative z-10 border-t border-white/5 px-6 lg:px-10 py-8">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span
-            className="font-extrabold text-lg"
-            style={{ background: 'linear-gradient(90deg, #fb923c, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-          >
-            Zafer
-          </span>
-          <p className="text-zinc-600 text-sm text-center">
-            © 2025 Zafer — Marketplace entre particuliers à l&apos;île Maurice
-          </p>
-          <p className="text-zinc-700 text-xs">Fait avec ❤️ à Maurice 🇲🇺</p>
-        </div>
+      <footer className="px-6 lg:px-12 py-8 max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"
+        style={{ borderTop: '1px solid rgba(245,236,226,0.07)' }}>
+        <Image src="/logo-splash.png" alt="Zafer" width={80} height={40} style={{ objectFit: 'contain' }} />
+        <p style={{ color: '#3A2818', fontSize: 12 }}>© 2025 Zafer — Fait avec ❤️ à l&apos;île Maurice 🇲🇺</p>
       </footer>
-
-      {/* Gradient pan animation for hero text */}
-      <style>{`
-        @keyframes gradient-pan {
-          0% { background-position: 0% center; }
-          100% { background-position: 200% center; }
-        }
-      `}</style>
     </div>
   )
 }
