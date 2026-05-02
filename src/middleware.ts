@@ -34,9 +34,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Exclut les fichiers statiques, images, et la route OAuth callback
+    // Exclut les fichiers statiques, images, la route OAuth callback, et les pages marketing
     // Important : le middleware ne doit PAS intercepter /auth/callback car
     // getUser() peut interférer avec l'échange du code PKCE (bug Safari)
-    '/((?!_next/static|_next/image|favicon.ico|auth/callback|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|auth/callback|waitlist|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
